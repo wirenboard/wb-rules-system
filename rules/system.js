@@ -9,6 +9,14 @@ defineVirtualDevice("system", {
       type: "text",
       value: "0"
     },
+    "Short SN": {
+      type: "text",
+      value: ""
+    },
+    "DTS Version": {
+      type: "text",
+      value: ""
+    },
     "Reboot": {
       type: "pushbutton"
     }
@@ -31,6 +39,20 @@ spawn('cat', ['/etc/wb-fw-version'], {
   captureOutput: true,
   exitCallback: function (exitCode, capturedOutput) {
     dev.system["Firmware version"] = capturedOutput;
+  }
+});
+
+spawn('cat', ['/var/lib/wirenboard/short_sn.conf'], {
+  captureOutput: true,
+  exitCallback: function (exitCode, capturedOutput) {
+    dev.system["Short SN"] = capturedOutput;
+  }
+});
+
+spawn('sh', ['-c', '. /etc/wb_env.sh && echo $WB_VERSION'], {
+  captureOutput: true,
+  exitCallback: function (exitCode, capturedOutput) {
+    dev.system["DTS Version"] = capturedOutput;
   }
 });
 

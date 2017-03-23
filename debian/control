@@ -8,5 +8,5 @@ Homepage: <insert the upstream URL, if relevant>
 
 Package: wb-rules-system
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, wb-rules (>= 1.2.2)
+Depends: ${shlibs:Depends}, ${misc:Depends}, wb-rules (>= 1.2.2), wb-utils (>= 1.69.6)
 Description: Default system rules for Wiren Board
