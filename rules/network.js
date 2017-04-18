@@ -19,14 +19,10 @@ defineVirtualDevice("network", {
 
 
 function _system_update_ip(name, iface) {
-   runShellCommand('ip addr show ' + iface + ' | grep "inet " | cut -c 10- | cut -d/ -f1',{
+   runShellCommand('ifconfig ' + iface + ' | awk -F \' *|:\' \'/inet addr/{print $4}\'',{
       captureOutput: true,
       exitCallback: function (exitCode, capturedOutput) {
-        if (capturedOutput.slice(0, 6) != "Device" ) {
-            dev.network[name] = capturedOutput.slice(0,-1);
-        } else {
-            dev.network[name] = "";
-        }
+        dev.network[name] = capturedOutput;
       }
   });
 };
