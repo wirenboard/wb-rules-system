@@ -19,7 +19,7 @@ defineVirtualDevice("network", {
 
 
 function _system_update_ip(name, iface) {
-   runShellCommand('ifconfig ' + iface + ' | awk -F \' *|:\' \'/inet addr/{print $4}\'',{
+   runShellCommand('ip addr show ' + iface + ' | grep \"inet\\b\" | awk \'{print $2}\' | cut -d/ -f1',{      
       captureOutput: true,
       exitCallback: function (exitCode, capturedOutput) {
         dev.network[name] = capturedOutput;
