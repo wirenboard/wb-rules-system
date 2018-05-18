@@ -1,11 +1,19 @@
 defineVirtualDevice("network", {
     title:"Network",
     cells: {
-        "Ethernet IP": {
+        "Ethernet IP 0": {
             type: "text",
             value: ""
         },
-        "Wi-Fi IP": {
+        "Ethernet IP 1": {
+            type: "text",
+            value: ""
+        },
+        "Wi-Fi IP 0": {
+            type: "text",
+            value: false
+        },
+        "Wi-Fi IP 1": {
             type: "text",
             value: false
         },
