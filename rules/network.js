@@ -1,19 +1,19 @@
 defineVirtualDevice("network", {
     title:"Network",
     cells: {
-        "Ethernet IP 0": {
+        "Ethernet 0 IP": {
             type: "text",
             value: ""
         },
-        "Ethernet IP 1": {
+        "Ethernet 1 IP": {
             type: "text",
             value: ""
         },
-        "Wi-Fi IP 0": {
+        "Wi-Fi 0 IP": {
             type: "text",
             value: false
         },
-        "Wi-Fi IP 1": {
+        "Wi-Fi 1 IP": {
             type: "text",
             value: false
         },
@@ -37,10 +37,10 @@ function _system_update_ip(name, iface) {
 
 
 function _system_update_ip_all() {
-    _system_update_ip("Ethernet IP 0", "eth0");
-    _system_update_ip("Ethernet IP 1", "eth1");
-    _system_update_ip("Wi-Fi IP 0", "wlan0");
-    _system_update_ip("Wi-Fi IP 1", "wlan1");
+    _system_update_ip("Ethernet 0 IP", "eth0");
+    _system_update_ip("Ethernet 1 IP", "eth1");
+    _system_update_ip("Wi-Fi 0 IP", "wlan0");
+    _system_update_ip("Wi-Fi 1 IP", "wlan1");
     _system_update_ip("GPRS IP", "ppp0");
 };
 
