@@ -1,3 +1,9 @@
+wb-rules-system (1.4.2) stable; urgency=medium
+
+  * add new network interface topics
+
+ -- Attila Door <a.door@wirenboard.ru>  Fri, 18 May 2018 14:45:51 +0300
+
 wb-rules-system (1.4.1) stable; urgency=medium
 
   * ip parsing has changed for debian stretch compatibility
