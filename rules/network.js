@@ -29,8 +29,10 @@ function _system_update_ip(name, iface) {
 
 
 function _system_update_ip_all() {
-    _system_update_ip("Ethernet IP", "eth0");
-    _system_update_ip("Wi-Fi IP", "wlan0");
+    _system_update_ip("Ethernet IP 0", "eth0");
+    _system_update_ip("Ethernet IP 1", "eth1");
+    _system_update_ip("Wi-Fi IP 0", "wlan0");
+    _system_update_ip("Wi-Fi IP 1", "wlan1");
     _system_update_ip("GPRS IP", "ppp0");
 };
 
