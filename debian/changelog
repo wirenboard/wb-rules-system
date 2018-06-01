@@ -1,3 +1,9 @@
+wb-rules-system (1.4.3) stable; urgency=medium
+
+  * stable release: add new network interface topics
+
+ -- Evgeny Boger <boger@contactless.ru>  Fri, 01 Jun 2018 22:51:56 +0300
+
 wb-rules-system (1.4.2) stable; urgency=medium
 
   * add new network interface topics
