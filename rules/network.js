@@ -5,7 +5,15 @@ defineVirtualDevice("network", {
             type: "text",
             value: ""
         },
+        "Ethernet 2 IP": {
+            type: "text",
+            value: ""
+        },
         "Wi-Fi IP": {
+            type: "text",
+            value: false
+        },
+        "Wi-Fi 2 IP": {
             type: "text",
             value: false
         },
@@ -30,7 +38,9 @@ function _system_update_ip(name, iface) {
 
 function _system_update_ip_all() {
     _system_update_ip("Ethernet IP", "eth0");
+    _system_update_ip("Ethernet 2 IP", "eth1");
     _system_update_ip("Wi-Fi IP", "wlan0");
+    _system_update_ip("Wi-Fi 2 IP", "wlan1");
     _system_update_ip("GPRS IP", "ppp0");
 };
 
