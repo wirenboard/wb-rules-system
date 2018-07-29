@@ -1,3 +1,9 @@
+wb-rules-system (1.5) stable; urgency=medium
+
+  * show board temperatures on WB6
+
+ -- Evgeny Boger <boger@contactless.ru>  Sun, 29 Jul 2018 20:56:33 +0300
+
 wb-rules-system (1.4.3) stable; urgency=medium
 
   * stable release: add new network interface topics
