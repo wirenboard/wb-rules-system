@@ -22,7 +22,7 @@
 
   var pwm_number = 2;
 
-  runShellCommand(". /etc/wb_env.sh && echo -n $WB_PWM_BUZZER", {
+  runShellCommand("bash -c '. /etc/wb_env.sh && echo -n $WB_PWM_BUZZER'", {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       if (capturedOutput) {

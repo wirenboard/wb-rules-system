@@ -1,3 +1,9 @@
+wb-rules-system (1.6.1) stable; urgency=medium
+
+  * compatible with wb-utils 2
+
+ -- Evgeny Boger <boger@contactless.ru>  Fri, 28 Sep 2018 00:55:26 +0300
+
 wb-rules-system (1.6) stable; urgency=medium
 
   * adds device overlay information to System tab
