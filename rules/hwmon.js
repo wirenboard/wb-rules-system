@@ -17,7 +17,6 @@ runShellCommand("set /proc/device-tree/wirenboard/hwmon-nodes/*/*; [ -e \"$1\" ]
   captureOutput: true,
   exitCallback: function (exitCode, capturedOutput) {
     if (exitCode != 0) return;
-    log(capturedOutput);
     var strList=capturedOutput.split("\n")
     for (var i=0; i<strList.length; ++i) {
       var strParts=_str_split_space(strList[i]);
@@ -28,7 +27,6 @@ runShellCommand("set /proc/device-tree/wirenboard/hwmon-nodes/*/*; [ -e \"$1\" ]
        var match = path.match(/\/([^\/]*)\/([^\/]*)$/);
        var nodeName = match[1];
        var propName = match[2];
-       log("nodeName={} propName={} contents={}".format(nodeName, propName, contents));
        if (!nodeInfo[nodeName]) {
          nodeInfo[nodeName] = {};
        }
