@@ -1,3 +1,9 @@
+wb-rules-system (1.6.3) stable; urgency=medium
+
+  * fix temperature type
+
+ -- Roman Kubar <r.kubar@wirenboard.ru>  Mon, 25 Nov 2019 16:28:01 +0300
+
 wb-rules-system (1.6.2) stable; urgency=medium
 
   * remove extensive logging in hwmon

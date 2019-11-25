@@ -39,7 +39,7 @@ runShellCommand("set /proc/device-tree/wirenboard/hwmon-nodes/*/*; [ -e \"$1\" ]
     for (var nodeName in nodeInfo) {
       if (nodeInfo.hasOwnProperty(nodeName)) {
         var node = nodeInfo[nodeName];
-        cells[node['title']] = {type: 'temperature', value: ''};
+        cells[node['title']] = {type: 'temperature', value: 0.0};
       }
     }
 
@@ -81,7 +81,7 @@ function readChannel(path, controlName) {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       if (exitCode == 0) {
-        dev['hwmon'][controlName] = (parseInt(capturedOutput ) * 0.001).toFixed(3);
+        dev['hwmon'][controlName] = parseFloat((parseInt(capturedOutput ) * 0.001).toFixed(3));
       }
     }
   });
