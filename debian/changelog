@@ -1,3 +1,9 @@
+wb-rules-system (1.6.4) stable; urgency=medium
+
+  * usage of lazyInit flag to reduce storage utilization
+
+ -- Roman Kubar <r.kubar@wirenboard.ru>  Thu, 26 Mar 2020 21:12:08 +0300
+
 wb-rules-system (1.6.3) stable; urgency=medium
 
   * fix temperature type

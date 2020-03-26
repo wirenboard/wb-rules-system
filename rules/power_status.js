@@ -1,4 +1,4 @@
-
+var Bat = 0
 
 defineVirtualDevice("power_status", {
   title: "Power status", //
@@ -7,15 +7,24 @@ defineVirtualDevice("power_status", {
     'working on battery' : {
         type : "switch",
         value : false,
-        readonly : true
+        readonly : true,
+        lazyInit: true
     },
     'Vin' : {
         type : "voltage",
-        value : 0
+        value : 0,
+        lazyInit: true
     }
 
 
   }
+});
+
+defineRule("_system_track_bat", {
+    whenChanged: "wb-adc/BAT",
+    then: function() {
+      Bat = dev["wb-adc"]["BAT"]
+    }
 });
 
 
@@ -23,7 +32,7 @@ defineVirtualDevice("power_status", {
 defineRule("_system_track_vin", {
     whenChanged: "wb-adc/Vin",
     then: function() {
-        if (dev["wb-adc"]["Vin"] < dev["wb-adc"]["BAT"] ) {
+        if (dev["wb-adc"]["Vin"] < Bat ) {
             dev["power_status"]["Vin"] = 0;
         } else {
             dev["power_status"]["Vin"] = dev["wb-adc"]["Vin"] ;
@@ -35,7 +44,7 @@ defineRule("_system_track_vin", {
 
 defineRule("_system_dc_on", {
   asSoonAs: function () {
-    return  dev["wb-adc"]["Vin"] > dev["wb-adc"]["BAT"];
+    return  dev["wb-adc"]["Vin"] > Bat;
   },
   then: function () {
     dev["power_status"]["working on battery"] = false;
@@ -44,10 +53,9 @@ defineRule("_system_dc_on", {
 
 defineRule("_system_dc_off", {
   asSoonAs: function () {
-    return  dev["wb-adc"]["Vin"] <= dev["wb-adc"]["BAT"];
+    return  dev["wb-adc"]["Vin"] <= Bat;
   },
   then: function () {
     dev["power_status"]["working on battery"] = true;
   }
 });
-

@@ -39,7 +39,7 @@ runShellCommand("set /proc/device-tree/wirenboard/hwmon-nodes/*/*; [ -e \"$1\" ]
     for (var nodeName in nodeInfo) {
       if (nodeInfo.hasOwnProperty(nodeName)) {
         var node = nodeInfo[nodeName];
-        cells[node['title']] = {type: 'temperature', value: 0.0};
+        cells[node['title']] = {type: 'temperature', value: 0.0, lazyInit: true};
       }
     }
 
