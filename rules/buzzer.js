@@ -7,15 +7,18 @@
           type : "range",
           value : 3000,
           max : 7000,
+          writeable : true,
       },
       volume : {
           type : "range",
           value : 10,
           max : 100,
+          writeable : true,
       },
       enabled : {
           type : "switch",
           value : false,
+          writeable : true,
       },
     }
   });
