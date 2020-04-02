@@ -1,6 +1,6 @@
 wb-rules-system (1.6.4) stable; urgency=medium
 
-  * fix writable flags inside buzzer device
+  * fix writable flags inside buzzer and power_status devices
 
  -- Roman Kubar <r.kubar@wirenboard.ru>  Thu, 02 Apr 2020 14:29:33 +0300
 

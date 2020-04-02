@@ -7,7 +7,7 @@ defineVirtualDevice("power_status", {
     'working on battery' : {
         type : "switch",
         value : false,
-        readonly : true
+        writeable : false
     },
     'Vin' : {
         type : "voltage",
