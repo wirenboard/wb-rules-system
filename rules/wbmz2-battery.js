@@ -2,7 +2,6 @@ var configPath = "/etc/wbmz2-battery.conf";
 var rcg_ohm = 0.025; // Gas gauge sense resistor (Ω) (10 to 50 mΩ)
 var updateIntervalMs = 3000; //Интервал обновления данных (мс)
 var startChargeCorrection = -1500; // Калибровочное значение по умолчанию
-var batteryСapacity = 2500;
 var config = readConfig(configPath);
 var inited = false;
 var wbmz2_ps = new PersistentStorage("wbmz2-battery", {global: true}); // Глобальное хранилище для калибровочных значений
@@ -16,6 +15,10 @@ function initDevice() {
         cells: {
             Current: {
                 type: "current",
+                value: 0
+            },
+            'Remaining %': {
+                type: "value",
                 value: 0
             },
             Voltage: {
@@ -35,8 +38,10 @@ function initDevice() {
 
     /*Вписываем в хранилище значение по умолчанию, если оно пустое, сбрасываем счетчик модуля на 0*/
     if (!wbmz2_ps.correction) {
-        runShellCommand("i2cset -y {} 0x70 0x01 0x02".format(config.bus));
         wbmz2_ps.correction = startChargeCorrection;
+        wbmz2_ps.min = 0;
+        wbmz2_ps.max = 0;
+        wbmz2_ps.batteryСapacity = 0;
     }
 
     inited = true;
@@ -99,13 +104,20 @@ function readI2cData() {
                 var charge_uvh = 6.70 * parse2ndComplement16(сhargeRaw); // The charge data is coded in 2’s complement format, and the LSB value is 6.70 uV.h.
                 var charge_mah = charge_uvh * 1E-3 / rcg_ohm;
 
-                /*Если вычисленная ёмкость оказалась меньше нуля, то обновляем значение коррекциии*/
+                if (charge_mah < wbmz2_ps.min) {
+                    wbmz2_ps.min = charge_mah;
+                } else if (charge_mah > wbmz2_ps.max) {
+                    wbmz2_ps.max = charge_mah;
+                }
+                wbmz2_ps.batteryСapacity = wbmz2_ps.max - wbmz2_ps.min;
+                
                 if ((charge_mah - wbmz2_ps.correction) < 0) {
                     wbmz2_ps.correction = charge_mah;
-                } else if ((charge_mah - wbmz2_ps.correction) > batteryСapacity) {
-                    wbmz2_ps.correction = -(batteryСapacity - charge_mah);
+                } else if ((charge_mah - wbmz2_ps.correction) > wbmz2_ps.batteryСapacity) {
+                    wbmz2_ps.correction = -(wbmz2_ps.batteryСapacity - charge_mah);
                 }
                 dev['wbmz2-battery']['Charge'] = Math.round((charge_mah - wbmz2_ps.correction) * 100) / 100;
+                dev['wbmz2-battery']['Remaining %'] = Math.round((charge_mah - wbmz2_ps.correction) / (wbmz2_ps.batteryСapacity / 100));
             }
         }
     });
