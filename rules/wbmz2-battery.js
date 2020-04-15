@@ -1,11 +1,12 @@
 var configPath = "/etc/wbmz2-battery.conf";
 var rcg_ohm = 0.025; // Gas gauge sense resistor (Ω) (10 to 50 mΩ)
 var updateIntervalMs = 3000; //Интервал обновления данных (мс)
-var startChargeCorrection = -1500; // Калибровочное значение по умолчанию
+var startChargeCorrection = 0; // Калибровочное значение по умолчанию
 var config = readConfig(configPath);
 var inited = false;
 var wbmz2_ps = new PersistentStorage("wbmz2-battery", {global: true}); // Глобальное хранилище для калибровочных значений
 
+/*Сброс Калибровочных значений*/
 function reset() {
     runShellCommand("i2cset -y {} 0x70 0x01 0x02".format(config.bus));
     wbmz2_ps.correction = startChargeCorrection;
