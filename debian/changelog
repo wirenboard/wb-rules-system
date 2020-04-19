@@ -1,3 +1,12 @@
+wb-rules-system (1.6.5) stable; urgency=medium
+
+  * fix power status for good on WB5 and WB6
+  using wbmz2-battery controller data on the latter.
+ 
+  * WB2.8, WBSH 3.5 and WB 4 were not tested and might be broken
+
+ -- Evgeny Boger <boger@contactless.ru>  Sun, 19 Apr 2020 17:49:38 +0300
+
 wb-rules-system (1.6.4) stable; urgency=medium
 
   * add wbmz2-battery module
