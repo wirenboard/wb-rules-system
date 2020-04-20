@@ -1,3 +1,9 @@
+wb-rules-system (1.6.6) stable; urgency=medium
+
+  * add recommends for wb-hwconf-manager
+
+ -- Evgeny Boger <boger@contactless.ru>  Mon, 20 Apr 2020 23:27:19 +0300
+
 wb-rules-system (1.6.5) stable; urgency=medium
 
   * fix power status for good on WB5 and WB6
