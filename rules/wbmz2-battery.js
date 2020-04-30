@@ -18,62 +18,38 @@ function reset() {
 function initDevice(resetButon) {
     /*Инициализация модуля*/
     runShellCommand("i2cset -y {} 0x70 0x00 0x10".format(config.bus));
+    var cells = ({
+        Percentage: {
+            type: "value",
+            value: 0
+        },
+        Charge: {
+            type: "value",
+            value: 0
+        },
+        Current: {
+            type: "value",
+            value: 0
+        },
+        Voltage: {
+            type: "voltage",
+            value: 0
+        },
+        Temperature: {
+            type: "temperature",
+            value: 0
+        }
+    });
     if (resetButon) {
-        defineVirtualDevice("wbmz2-battery", {
-            title: "WBMZ2-BATTERY",
-            cells: {
-                Percentage: {
-                    type: "value",
-                    value: 0
-                },
-                Charge: {
-                    type: "value",
-                    value: 0
-                },
-                Current: {
-                    type: "value",
-                    value: 0
-                },
-                Voltage: {
-                    type: "voltage",
-                    value: 0
-                },
-                Temperature: {
-                    type: "temperature",
-                    value: 0
-                },
-                Reset: {
-                    type: "pushbutton"
-                }
-            }
+        cells["Reset"] = ({
+            type: "pushbutton",
         });
-    } else {
-        defineVirtualDevice("wbmz2-battery", {
-            title: "WBMZ2-BATTERY",
-            cells: {
-                Percentage: {
-                    type: "value",
-                    value: 0
-                },
-                Charge: {
-                    type: "value",
-                    value: 0
-                },
-                Current: {
-                    type: "value",
-                    value: 0
-                },
-                Voltage: {
-                    type: "voltage",
-                    value: 0
-                },
-                Temperature: {
-                    type: "temperature",
-                    value: 0
-                }
-            }
-        });
-    }
+    };
+    defineVirtualDevice("wbmz2-battery", {
+        title: "WBMZ2-BATTERY",
+        cells: cells
+    });
+
     if (!wbmz2_ps.correction) {
         reset();
     }
