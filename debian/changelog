@@ -1,3 +1,9 @@
+wb-rules-system (1.6.7) stable; urgency=medium
+
+  * add reset button settings
+
+ -- Yan Yanin <ianin@wirenboard.ru>  Wed, 29 Apr 2020 18:01:39 +0300
+
 wb-rules-system (1.6.6) stable; urgency=medium
 
   * add recommends for wb-hwconf-manager
