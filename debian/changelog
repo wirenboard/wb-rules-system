@@ -1,3 +1,9 @@
+wb-rules-system (1.6.8) stable; urgency=medium
+
+  * add disk_space.js
+
+ -- Andrey Radionv <sysadmin@brainroot.ru>  Wed, 01 Jul 2020 20:41:39 +0300
+
 wb-rules-system (1.6.7) stable; urgency=medium
 
   * add reset button settings
