@@ -86,8 +86,8 @@ function initSystemDevice(hasWirenboardNode) {
     systemCells["Temperature Grade"] = {type: "text", value: ""};
   }
 
-
-function fillSystemDiskStats(volumePath, namepart) { //path to partition, name for Cells (interface)
+//volumePath - path to partition, namepart - name for Cells (interface)
+function fillSystemDiskStats(volumePath, namepart) { 
   runShellCommand("df -m "+volumePath+" | tail -1", {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {

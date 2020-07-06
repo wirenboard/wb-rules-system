@@ -1,8 +1,8 @@
 wb-rules-system (1.7.0) stable; urgency=medium
 
-  * add disk_space.js
+  * add disk space in system.js
 
- -- Andrey Radionv <sysadmin@brainroot.ru>  Wed, 01 Jul 2020 20:41:39 +0300
+ -- Andrey Radionov <sysadmin@brainroot.ru>  Wed, 01 Jul 2020 20:41:39 +0300
 
 wb-rules-system (1.6.7) stable; urgency=medium
 
