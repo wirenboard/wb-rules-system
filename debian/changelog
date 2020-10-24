@@ -1,3 +1,9 @@
+wb-rules-system (1.6.8) stable; urgency=medium
+
+  * renamed rule (and virtual device inside) for wbmz-battery to fit both wbmz2/3 modules
+
+ -- Vladimir Romanov <v.romanov@wirenboard.ru>  Wed, 30 Sep 2020 16:37:01 +0300
+
 wb-rules-system (1.6.7) stable; urgency=medium
 
   * add reset button settings
@@ -14,7 +20,7 @@ wb-rules-system (1.6.5) stable; urgency=medium
 
   * fix power status for good on WB5 and WB6
   using wbmz2-battery controller data on the latter.
- 
+
   * WB2.8, WBSH 3.5 and WB 4 were not tested and might be broken
 
  -- Evgeny Boger <boger@contactless.ru>  Sun, 19 Apr 2020 17:49:38 +0300
@@ -82,7 +88,7 @@ wb-rules-system (1.4) stable; urgency=medium
 wb-rules-system (1.3.1) stable; urgency=medium
 
   * use board-specific PWM number for buzzer
- 
+
 
  -- Evgeny Boger <boger@contactless.ru>  Mon, 08 Feb 2016 19:20:19 +0300
 

@@ -45,8 +45,8 @@ function initDevice(resetButon) {
             type: "pushbutton",
         });
     };
-    defineVirtualDevice("wbmz2-battery", {
-        title: "WBMZ2-BATTERY",
+    defineVirtualDevice("battery", {
+        title: "Battery",
         cells: cells
     });
 
@@ -57,7 +57,7 @@ function initDevice(resetButon) {
 }
 
 defineRule("_reset_calib", {
-    whenChanged: ["wbmz2-battery/Reset"],
+    whenChanged: ["battery/Reset"],
     then: function(newValue, devName, cellName) {
         reset();
     }
@@ -86,18 +86,18 @@ function readI2cData() {
         exitCallback: function(exitCode, capturedOutput) {
             if (!capturedOutput) {
                 /*Записываем в /meta/error значение "r" в случае ошибки чтения данных*/
-                publish("/devices/wbmz2-battery/controls/Current/meta/error", "r", 2, true);
-                publish("/devices/wbmz2-battery/controls/Voltage/meta/error", "r", 2, true);
-                publish("/devices/wbmz2-battery/controls/Temperature/meta/error", "r", 2, true);
-                publish("/devices/wbmz2-battery/controls/Charge/meta/error", "r", 2, true);
-                publish("/devices/wbmz2-battery/controls/Percentage/meta/error", "r", 2, true);
+                publish("/devices/battery/controls/Current/meta/error", "r", 2, true);
+                publish("/devices/battery/controls/Voltage/meta/error", "r", 2, true);
+                publish("/devices/battery/controls/Temperature/meta/error", "r", 2, true);
+                publish("/devices/battery/controls/Charge/meta/error", "r", 2, true);
+                publish("/devices/battery/controls/Percentage/meta/error", "r", 2, true);
             } else {
                 /*Удаляем значение "r" из /meta/error если данные прочитаны */
-                publish("/devices/wbmz2-battery/controls/Current/meta/error", "", 2, true);
-                publish("/devices/wbmz2-battery/controls/Voltage/meta/error", "", 2, true);
-                publish("/devices/wbmz2-battery/controls/Temperature/meta/error", "", 2, true);
-                publish("/devices/wbmz2-battery/controls/Charge/meta/error", "", 2, true);
-                publish("/devices/wbmz2-battery/controls/Percentage/meta/error", "", 2, true);
+                publish("/devices/battery/controls/Current/meta/error", "", 2, true);
+                publish("/devices/battery/controls/Voltage/meta/error", "", 2, true);
+                publish("/devices/battery/controls/Temperature/meta/error", "", 2, true);
+                publish("/devices/battery/controls/Charge/meta/error", "", 2, true);
+                publish("/devices/battery/controls/Percentage/meta/error", "", 2, true);
 
                 /*Массив с полученными данными*/
                 var arrayOfData = capturedOutput.split(' ');
@@ -105,17 +105,17 @@ function readI2cData() {
                 /*Сurrent*/
                 var currentRaw = parseInt("0x" + arrayOfData[6] + arrayOfData[5], 16);
                 var voltage_uv = 11.77 * parse2ndComplement(currentRaw); // The battery current is coded in 2’s complement format, and the LSB value is 11.77 uV
-                dev['wbmz2-battery']['Current'] = Math.round(voltage_uv * 1E-6 / rcg_ohm * 1000) / 1000;
+                dev['battery']['Current'] = Math.round(voltage_uv * 1E-6 / rcg_ohm * 1000) / 1000;
 
                 /*Voltage*/
                 var voltageRaw = parseInt("0x" + arrayOfData[8] + arrayOfData[7], 16);
                 var voltage_mv = 2.44 * voltageRaw; // The resolution is 2.44 mV for the battery voltage.
-                dev['wbmz2-battery']['Voltage'] = Math.round(voltage_mv * 1E-3 * 1000) / 1000;
+                dev['battery']['Voltage'] = Math.round(voltage_mv * 1E-3 * 1000) / 1000;
 
                 /*Temperature*/
                 var temperatureRaw = parseInt("0x" + arrayOfData[10] + arrayOfData[9], 16);
                 var temperature = 0.125 * parse2ndComplement(temperatureRaw); // The resolution is 0.125° C for the temperature.
-                dev['wbmz2-battery']['Temperature'] = Math.round(temperature * 1000) / 1000;
+                dev['battery']['Temperature'] = Math.round(temperature * 1000) / 1000;
 
                 /*Charge (mAh)*/
                 var сhargeRaw = parseInt("0x" + arrayOfData[2] + arrayOfData[1], 16);
@@ -134,8 +134,8 @@ function readI2cData() {
                 } else if ((charge_mah - wbmz2_ps.correction) > wbmz2_ps.batteryСapacity) {
                     wbmz2_ps.correction = -(wbmz2_ps.batteryСapacity - charge_mah);
                 }
-                dev['wbmz2-battery']['Charge'] = Math.round((charge_mah - wbmz2_ps.correction) * 100) / 100;
-                dev['wbmz2-battery']['Percentage'] = Math.round((charge_mah - wbmz2_ps.correction) / (wbmz2_ps.batteryСapacity / 100));
+                dev['battery']['Charge'] = Math.round((charge_mah - wbmz2_ps.correction) * 100) / 100;
+                dev['battery']['Percentage'] = Math.round((charge_mah - wbmz2_ps.correction) / (wbmz2_ps.batteryСapacity / 100));
             }
         }
     });
