@@ -1,3 +1,9 @@
+wb-rules-system (1.6.9) stable; urgency=medium
+
+  * fixed power_status rule to support wbmz2/3 modules
+
+ -- Vladimir Romanov <v.romanov@wirenboard.ru>  Wed, 09 Dec 2020 14:34:51 +0300
+
 wb-rules-system (1.6.8) stable; urgency=medium
 
   * renamed rule (and virtual device inside) for wbmz-battery to fit both wbmz2/3 modules
