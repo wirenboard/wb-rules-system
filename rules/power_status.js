@@ -31,7 +31,7 @@ defineRule("_system_track_vin", {
     }
 });
 
-/* Power status reporting for Wiren Board 5.x is based on 
+/* Power status reporting for Wiren Board 5.x is based on
     1) Vin value (normally above 7V)
     2) Battery present status
     3) Battery charging status
@@ -44,34 +44,34 @@ spawn('bash', ['-c', '. /etc/wb_env.sh && wb_source of && of_machine_match "cont
             defineRule("_system_wb5_track_power_status", {
                 whenChanged: [
                     function() { // get power status
-                        // we don't expect the voltage to go up and down 
+                        // we don't expect the voltage to go up and down
                         //  around the threshold, so no hysteresis here
-                        return dev["wb-gpio/BATTERY_PRESENT"] && !dev["wb-gpio/BATTERY_CHARGING"] 
+                        return dev["wb-gpio/BATTERY_PRESENT"] && !dev["wb-gpio/BATTERY_CHARGING"]
                             && (dev["wb-adc/Vin"] < 5.0);
                     }
                 ],
                 then: function (newValue, devName, cellName) {
                     dev["power_status/working on battery"] = newValue;
                 }
-            });            
+            });
         }
     }
 });
 
 
-/* Power status for Wiren Board 6+ with wbmz2-battery module */
+/* Power status for Wiren Board 6.x/6.7.x with wbmzX-battery module */
 
 var lastTriggeredCurrent = null;
 var currentHysteresis = 0.01;
 var dischargingThreshold = -0.02;
 
 defineRule("_system_wbmz2_power_status", {
-    whenChanged: ["wbmz2-battery/Current"],
+    whenChanged: ["battery/Current"],
     then: function (newValue, devName, cellName) {
         if (lastTriggeredCurrent != null)
             if (Math.abs(newValue - lastTriggeredCurrent) < currentHysteresis)
                 return;
-        
+
         var newStatus = (newValue < dischargingThreshold);
 
         if  (dev["power_status/working on battery"] != newStatus) {
@@ -80,4 +80,3 @@ defineRule("_system_wbmz2_power_status", {
         }
     }
 });
-
