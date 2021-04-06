@@ -15,6 +15,14 @@ var systemCells = {
     type: "text",
     value: ""
   },
+  "Release branch": {
+    type: "text",
+    value: ""
+  },
+  "Release version": {
+    type: "text",
+    value: ""
+  },
   "Reboot": {
     type: "pushbutton"
   }
@@ -96,6 +104,22 @@ function initSystemDevice(hasWirenboardNode) {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       dev.system["DTS Version"] = capturedOutput;
+    }
+  });
+
+  spawn('sh', ['-c', '. /etc/wb-release && echo $RELEASE_NAME'], {
+    captureOutput: true,
+    exitCallback: function (exitCode, capturedOutput) {
+      dev.system["Release version"] = capturedOutput;
+    }
+  });
+
+  spawn('tail', [ '-1', '/etc/apt/sources.list.d/wirenboard.list'], {
+    captureOutput: true,
+    exitCallback: function (exitCode, capturedOutput) {
+      if (exitCode === 0) {
+        dev.system["Release branch"] = capturedOutput.split(' ')[2];
+      }
     }
   });
 

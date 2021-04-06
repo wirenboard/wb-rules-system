@@ -1,3 +1,9 @@
+wb-rules-system (1.6.10) unstable; urgency=medium
+
+  * add release info in system device
+
+ -- Nikita Maslov <nikita.maslov@wirenboard.ru>  Tue, 06 Apr 2021 13:49:44 +0300
+
 wb-rules-system (1.6.9) stable; urgency=medium
 
   * fixed power_status rule to support wbmz2/3 modules
