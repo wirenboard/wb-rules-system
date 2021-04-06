@@ -1,10 +1,11 @@
 Source: wb-rules-system
-Section: unknown
+Section: misc
 Priority: optional
 Maintainer: Evgeny Boger <boger@contactless.ru>
 Build-Depends: debhelper (>= 8.0.0)
 Standards-Version: 3.9.4
-Homepage: <insert the upstream URL, if relevant>
+Homepage: https://github.com/wirenboard/wb-rules-system/
+Vcs-Git: https://github.com/wirenboard/wb-rules-system/
 
 Package: wb-rules-system
 Architecture: all
