@@ -15,13 +15,22 @@ var systemCells = {
     type: "text",
     value: ""
   },
-  "Release branch": {
+  "Release suite": {
     type: "text",
     value: ""
   },
-  "Release version": {
+  "Release name": {
     type: "text",
     value: ""
+  },
+  "Release repo prefix": {
+    type: "text",
+    value: ""
+  },
+  "Development release": {
+    type: "switch",
+    readonly: true,
+    value: false
   },
   "Reboot": {
     type: "pushbutton"
@@ -60,7 +69,14 @@ function fillWirenboardNodeProperty(controlName, propertyName) {
   });
 }
 
-
+function getReleaseInfoProperty(property, cell) {
+  spawn('sh', ['-c', '. /usr/lib/wb-release && echo $' + property], {
+    captureOutput: true,
+    exitCallback: function (exitCode, capturedOutput) {
+      dev.system[cell] = capturedOutput;
+    }
+  });
+}
 
 function initSystemDevice(hasWirenboardNode) {
   if (hasWirenboardNode) {
@@ -107,19 +123,14 @@ function initSystemDevice(hasWirenboardNode) {
     }
   });
 
-  spawn('sh', ['-c', '. /etc/wb-release && echo $RELEASE_NAME'], {
-    captureOutput: true,
-    exitCallback: function (exitCode, capturedOutput) {
-      dev.system["Release version"] = capturedOutput;
-    }
-  });
+  getReleaseInfoProperty("RELEASE_NAME", "Release name")
+  getReleaseInfoProperty("SUITE", "Release suite")
+  getReleaseInfoProperty("REPO_PREFIX", "Release repo prefix")
 
-  spawn('tail', [ '-1', '/etc/apt/sources.list.d/wirenboard.list'], {
+  spawn('sh', ['-c', '. /usr/lib/wb-release && echo $REPO_PREFIX'], {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      if (exitCode === 0) {
-        dev.system["Release branch"] = capturedOutput.split(' ')[2];
-      }
+      dev.system["Development release"] = (capturedOutput !== "");
     }
   });
 
