@@ -15,6 +15,23 @@ var systemCells = {
     type: "text",
     value: ""
   },
+  "Release suite": {
+    type: "text",
+    value: ""
+  },
+  "Release name": {
+    type: "text",
+    value: ""
+  },
+  "Release repo prefix": {
+    type: "text",
+    value: ""
+  },
+  "Development release": {
+    type: "switch",
+    readonly: true,
+    value: false
+  },
   "Reboot": {
     type: "pushbutton"
   }
@@ -52,7 +69,14 @@ function fillWirenboardNodeProperty(controlName, propertyName) {
   });
 }
 
-
+function getReleaseInfoProperty(property, cell) {
+  spawn('sh', ['-c', '. /usr/lib/wb-release && echo $' + property], {
+    captureOutput: true,
+    exitCallback: function (exitCode, capturedOutput) {
+      dev.system[cell] = capturedOutput;
+    }
+  });
+}
 
 function initSystemDevice(hasWirenboardNode) {
   if (hasWirenboardNode) {
@@ -96,6 +120,17 @@ function initSystemDevice(hasWirenboardNode) {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       dev.system["DTS Version"] = capturedOutput;
+    }
+  });
+
+  getReleaseInfoProperty("RELEASE_NAME", "Release name")
+  getReleaseInfoProperty("SUITE", "Release suite")
+  getReleaseInfoProperty("REPO_PREFIX", "Release repo prefix")
+
+  spawn('sh', ['-c', '. /usr/lib/wb-release && echo $REPO_PREFIX'], {
+    captureOutput: true,
+    exitCallback: function (exitCode, capturedOutput) {
+      dev.system["Development release"] = (capturedOutput !== "");
     }
   });
 
