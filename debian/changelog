@@ -1,3 +1,10 @@
+wb-rules-system (1.6.11) stable; urgency=medium
+
+  * fix 'Development release' flag, it was broken on stable releases
+  * trim newlines in System device controls
+
+ -- Nikita Maslov <nikita.maslov@wirenboard.ru>  Mon, 26 Apr 2021 17:02:21 +0300
+
 wb-rules-system (1.6.10) unstable; urgency=medium
 
   * add release info in system device

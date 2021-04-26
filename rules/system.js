@@ -43,7 +43,7 @@ function _system_update_uptime() {
   runShellCommand('awk \'{print int($1/86400)\"d \"int(($1%86400)/3600)\"h \"int(($1%3600)/60)\"m\"}\' /proc/uptime', {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      dev.system["Current uptime"] = capturedOutput;
+      dev.system["Current uptime"] = capturedOutput.trim();
     }
   });
 };
@@ -63,7 +63,7 @@ function fillWirenboardNodeProperty(controlName, propertyName) {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       if (exitCode == 0) {
-        dev.system[controlName] = capturedOutput;
+        dev.system[controlName] = capturedOutput.trim();
       }
     }
   });
@@ -73,7 +73,7 @@ function getReleaseInfoProperty(property, cell) {
   spawn('sh', ['-c', '. /usr/lib/wb-release && echo $' + property], {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      dev.system[cell] = capturedOutput;
+      dev.system[cell] = capturedOutput.trim();
     }
   });
 }
@@ -105,14 +105,14 @@ function initSystemDevice(hasWirenboardNode) {
   spawn('cat', ['/etc/wb-fw-version'], {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      dev.system["Firmware version"] = capturedOutput;
+      dev.system["Firmware version"] = capturedOutput.trim();
     }
   });
 
   spawn('cat', ['/var/lib/wirenboard/short_sn.conf'], {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      dev.system["Short SN"] = capturedOutput;
+      dev.system["Short SN"] = capturedOutput.trim();
     }
   });
 
@@ -130,7 +130,7 @@ function initSystemDevice(hasWirenboardNode) {
   spawn('sh', ['-c', '. /usr/lib/wb-release && echo $REPO_PREFIX'], {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      dev.system["Development release"] = (capturedOutput !== "");
+      dev.system["Development release"] = (capturedOutput.trim() !== "");
     }
   });
 
