@@ -3,10 +3,6 @@ var systemCells = {
     type: "text",
     value: "0"
   },
-  "Firmware version": {
-    type: "text",
-    value: "0"
-  },
   "Short SN": {
     type: "text",
     value: ""
@@ -22,15 +18,6 @@ var systemCells = {
   "Release name": {
     type: "text",
     value: ""
-  },
-  "Release repo prefix": {
-    type: "text",
-    value: ""
-  },
-  "Development release": {
-    type: "switch",
-    readonly: true,
-    value: false
   },
   "Reboot": {
     type: "pushbutton"
@@ -102,13 +89,6 @@ function initSystemDevice(hasWirenboardNode) {
   _system_update_uptime();
   setInterval(_system_update_uptime, 60000);
 
-  spawn('cat', ['/etc/wb-fw-version'], {
-    captureOutput: true,
-    exitCallback: function (exitCode, capturedOutput) {
-      dev.system["Firmware version"] = capturedOutput.trim();
-    }
-  });
-
   spawn('cat', ['/var/lib/wirenboard/short_sn.conf'], {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
@@ -125,14 +105,6 @@ function initSystemDevice(hasWirenboardNode) {
 
   getReleaseInfoProperty("RELEASE_NAME", "Release name")
   getReleaseInfoProperty("SUITE", "Release suite")
-  getReleaseInfoProperty("REPO_PREFIX", "Release repo prefix")
-
-  spawn('sh', ['-c', '. /usr/lib/wb-release && echo $REPO_PREFIX'], {
-    captureOutput: true,
-    exitCallback: function (exitCode, capturedOutput) {
-      dev.system["Development release"] = (capturedOutput.trim() !== "");
-    }
-  });
 
   defineRule("_system_reboot", {
     whenChanged: [ "system/Reboot" ],
