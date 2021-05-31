@@ -1,3 +1,10 @@
+wb-rules-system (1.6.13) stable; urgency=medium
+
+  * use deb-systemd-invoke restart wb-rules instead of service wb-rules
+    restart to build rootfs properly after removing wb-rules initscript
+
+ -- Nikita Maslov <nikita.maslov@wirenboard.ru>  Tue, 01 Jun 2021 00:09:26 +0300
+
 wb-rules-system (1.6.12) stable; urgency=medium
 
   * remove unnecessary fields from System device
