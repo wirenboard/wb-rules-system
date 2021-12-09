@@ -1,3 +1,9 @@
+wb-rules-system (1.7.0) stable; urgency=medium
+
+  * add dependency on linux-image-wb7
+
+ -- Nikita Maslov <nikita.maslov@wirenboard.ru>  Thu, 09 Dec 2021 15:55:30 +0300
+
 wb-rules-system (1.6.13) stable; urgency=medium
 
   * use deb-systemd-invoke restart wb-rules instead of service wb-rules
