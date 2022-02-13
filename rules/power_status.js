@@ -57,26 +57,3 @@ spawn('bash', ['-c', '. /etc/wb_env.sh && wb_source of && of_machine_match "cont
         }
     }
 });
-
-
-/* Power status for Wiren Board 6.x/6.7.x with wbmzX-battery module */
-
-var lastTriggeredCurrent = null;
-var currentHysteresis = 0.01;
-var dischargingThreshold = -0.02;
-
-defineRule("_system_wbmz2_power_status", {
-    whenChanged: ["battery/Current"],
-    then: function (newValue, devName, cellName) {
-        if (lastTriggeredCurrent != null)
-            if (Math.abs(newValue - lastTriggeredCurrent) < currentHysteresis)
-                return;
-
-        var newStatus = (newValue < dischargingThreshold);
-
-        if  (dev["power_status/working on battery"] != newStatus) {
-            dev["power_status/working on battery"] = newStatus;
-            lastTriggeredCurrent = newValue;
-        }
-    }
-});
