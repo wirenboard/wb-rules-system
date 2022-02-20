@@ -118,7 +118,7 @@ defineRule({
                     chargingStateSetTime = new Date();
                 } else {
                     // error writing new status, revert state
-                    getControl("battery/Charging").setValue({value: !newState, notify: false});
+                    getControl("battery/Charging").setValue({value: !newValue, notify: false});
                 }
             }
         });
@@ -168,5 +168,9 @@ function publishData() {
     }
 };
 
-setInterval(collectData, updateIntervalMs);
-setInterval(publishData, updateIntervalMs);
+function update() {
+    collectData();
+    publishData();
+}
+
+setInterval(update, updateIntervalMs);
