@@ -1,13 +1,19 @@
 var updateIntervalMs = 1000; //Интервал обновления данных (мс)
 
-var vdev = defineVirtualDevice('battery', {
-    title: "Battery",
-    cells: {
-    }
-});
+var vdev = null;
 
 var powerSuppliesData = {};
 var powerSupplyNamesByType = {};
+
+var initialized = false;
+function initOnce() {
+    if (initialized) {
+        return;
+    }
+
+    setInterval(update, updateIntervalMs);
+    initialized = true;
+}
 
 function collectDataFromPowerSupply(name) {
     runShellCommand("udevadm info --query=property /sys/class/power_supply/{}".format(name), {
@@ -26,10 +32,11 @@ function collectDataFromPowerSupply(name) {
 
             if (dataMap["TYPE"]) {
                 if (dataMap["PRESENT"] != "0") {
-                        // do not overwrite if one power supply of this type is already found
-                        if (!powerSupplyNamesByType.hasOwnProperty(dataMap["TYPE"])) {
+                    // do not overwrite if one power supply of this type is already found
+                    if (!powerSupplyNamesByType.hasOwnProperty(dataMap["TYPE"])) {
                         powerSupplyNamesByType[dataMap["TYPE"]] = name;
                     }
+                    initOnce();
                 } else {
                     if (powerSupplyNamesByType[dataMap["TYPE"]] == name) {
                         delete powerSupplyNamesByType[dataMap["TYPE"]];
@@ -95,7 +102,7 @@ function updateControl(vdevObj, psData, psPropertyName, controlName, controlType
 }
 
 function removeControlIfExists(vdevObj, controlName) {
-    if (vdevObj.isControlExists(controlName)) {
+    if (vdevObj && vdevObj.isControlExists(controlName)) {
         vdevObj.removeControl(controlName);
     }
 }
@@ -140,10 +147,20 @@ function updateChargingControl(vdevObj, psData) {
     createControlOrSetValue(vdevObj, "Charging", {"type" : "switch"}, charging);
 }
 
+function createVdevOnce() {
+    if (!vdev) {
+        vdev = defineVirtualDevice('battery', {
+            title: "Battery",
+            cells: {}
+        });
+    }
+}
+
 function publishData() {
     var batName = powerSupplyNamesByType["Battery"];
     if (batName) {
         var batData = powerSuppliesData[batName];
+        createVdevOnce();
         updateControl(vdev, batData, "CAPACITY", "Percentage", "value", 1);
         updateControl(vdev, batData, "CURRENT_NOW", "Current", "value", 1000000);
         updateControl(vdev, batData, "VOLTAGE_NOW", "Voltage", "voltage", 1000000);
@@ -173,4 +190,5 @@ function update() {
     publishData();
 }
 
-setInterval(update, updateIntervalMs);
+// collect data at startup, initiralize the device and polling if power supplies found
+setTimeout(collectData, 0);

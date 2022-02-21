@@ -75,7 +75,6 @@ function initDevice(resetButon) {
     if (!wbmz2_ps.correction) {
         reset();
     }
-    inited = true;
 }
 
 defineRule("_reset_calib", {
@@ -165,14 +164,12 @@ function readI2cData() {
     });
 };
 
-/*Обновление данных*/
 function update() {
-    config = readConfig(configPath);
-    if (config.enable) {
-        if (!inited) {
-            initDevice(config.resetButon);
-        }
-        readI2cData();
-    }
-};
-setInterval(update, updateIntervalMs);
+    readI2cData();
+}
+
+config = readConfig(configPath);
+if (config.enable) {
+        initDevice(config.resetButon);
+        setInterval(update, updateIntervalMs);
+}
