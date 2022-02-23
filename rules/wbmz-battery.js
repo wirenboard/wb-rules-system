@@ -6,6 +6,14 @@ var config = readConfig(configPath);
 var inited = false;
 var wbmz2_ps = new PersistentStorage("wbmz2-battery", {global: true}); // Глобальное хранилище для калибровочных значений
 
+
+/* Power status for Wiren Board 6.x/6.7.x with wbmzX-battery module */
+
+var lastTriggeredCurrent = null;
+var currentHysteresis = 0.01;
+var dischargingThreshold = -0.02;
+
+
 /*Сброс Калибровочных значений*/
 function reset() {
     runShellCommand("i2cset -y {} 0x70 0x01 0x02".format(config.bus));
@@ -14,6 +22,20 @@ function reset() {
     wbmz2_ps.max = 0;
     wbmz2_ps.batteryСapacity = 0;
 };
+
+function updatePowerStatus(newCurrent) {
+    if (lastTriggeredCurrent != null)
+        if (Math.abs(newCurrent - lastTriggeredCurrent) < currentHysteresis)
+            return;
+
+    var newStatus = (newCurrent < dischargingThreshold);
+
+    if  (dev["power_status/working on battery"] != newStatus) {
+        dev["power_status/working on battery"] = newStatus;
+        lastTriggeredCurrent = newCurrent;
+    }
+}
+
 
 function initDevice(resetButon) {
     /*Инициализация модуля*/
@@ -53,7 +75,6 @@ function initDevice(resetButon) {
     if (!wbmz2_ps.correction) {
         reset();
     }
-    inited = true;
 }
 
 defineRule("_reset_calib", {
@@ -105,7 +126,9 @@ function readI2cData() {
                 /*Сurrent*/
                 var currentRaw = parseInt("0x" + arrayOfData[6] + arrayOfData[5], 16);
                 var voltage_uv = 11.77 * parse2ndComplement(currentRaw); // The battery current is coded in 2’s complement format, and the LSB value is 11.77 uV
-                dev['battery']['Current'] = Math.round(voltage_uv * 1E-6 / rcg_ohm * 1000) / 1000;
+                var current = Math.round(voltage_uv * 1E-6 / rcg_ohm * 1000) / 1000;
+                dev['battery']['Current'] = current;
+                updatePowerStatus(current);
 
                 /*Voltage*/
                 var voltageRaw = parseInt("0x" + arrayOfData[8] + arrayOfData[7], 16);
@@ -141,14 +164,12 @@ function readI2cData() {
     });
 };
 
-/*Обновление данных*/
 function update() {
-    config = readConfig(configPath);
-    if (config.enable) {
-        if (!inited) {
-            initDevice(config.resetButon);
-        }
-        readI2cData();
-    }
-};
-setInterval(update, updateIntervalMs);
+    readI2cData();
+}
+
+config = readConfig(configPath);
+if (config.enable) {
+        initDevice(config.resetButon);
+        setInterval(update, updateIntervalMs);
+}

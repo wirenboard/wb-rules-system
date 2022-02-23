@@ -1,3 +1,11 @@
+wb-rules-system (1.8.0) stable; urgency=medium
+
+  * add support for battery and supercap modules on WB7. It's actually
+    generic sysfs power class driver, so it might eventually work with
+    other boards and modules as well
+
+ -- Evgeny Boger <boger@wirenboard.com>  Tue, 08 Feb 2022 02:54:32 +0300
+
 wb-rules-system (1.7.0) stable; urgency=medium
 
   * add dependency on linux-image-wb7
