@@ -125,10 +125,12 @@ function readI2cData() {
 
                 /*Сurrent*/
                 var currentRaw = parseInt("0x" + arrayOfData[6] + arrayOfData[5], 16);
-                var voltage_uv = 11.77 * parse2ndComplement(currentRaw); // The battery current is coded in 2’s complement format, and the LSB value is 11.77 uV
-                var current = Math.round(voltage_uv * 1E-6 / rcg_ohm * 1000) / 1000;
-                dev['battery']['Current'] = current;
-                updatePowerStatus(current);
+                if (currentRaw < 0x4000) {
+                    var voltage_uv = 11.77 * parse2ndComplement(currentRaw); // The battery current is coded in 2’s complement format, and the LSB value is 11.77 uV
+                    var current = Math.round(voltage_uv * 1E-6 / rcg_ohm * 1000) / 1000;
+                    dev['battery']['Current'] = current;
+                    updatePowerStatus(current);
+                }
 
                 /*Voltage*/
                 var voltageRaw = parseInt("0x" + arrayOfData[8] + arrayOfData[7], 16);
