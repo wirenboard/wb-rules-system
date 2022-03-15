@@ -84,7 +84,8 @@ defineRule("_reset_calib", {
     }
 });
 
-function parse2ndComplement(raw) {
+function parse2ndComplement14(raw) {
+    raw &= 0x3FFF;
     if (raw > 0x2000) {
         return raw - 0x4000;
     } else {
@@ -125,7 +126,7 @@ function readI2cData() {
 
                 /*Сurrent*/
                 var currentRaw = parseInt("0x" + arrayOfData[6] + arrayOfData[5], 16);
-                var voltage_uv = 11.77 * parse2ndComplement(currentRaw); // The battery current is coded in 2’s complement format, and the LSB value is 11.77 uV
+                var voltage_uv = 11.77 * parse2ndComplement14(currentRaw); // The battery current is coded in 2’s complement format, and the LSB value is 11.77 uV
                 var current = Math.round(voltage_uv * 1E-6 / rcg_ohm * 1000) / 1000;
                 dev['battery']['Current'] = current;
                 updatePowerStatus(current);
@@ -137,7 +138,7 @@ function readI2cData() {
 
                 /*Temperature*/
                 var temperatureRaw = parseInt("0x" + arrayOfData[10] + arrayOfData[9], 16);
-                var temperature = 0.125 * parse2ndComplement(temperatureRaw); // The resolution is 0.125° C for the temperature.
+                var temperature = 0.125 * parse2ndComplement14(temperatureRaw); // The resolution is 0.125° C for the temperature.
                 dev['battery']['Temperature'] = Math.round(temperature * 1000) / 1000;
 
                 /*Charge (mAh)*/
