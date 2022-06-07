@@ -102,7 +102,7 @@ function parse2ndComplement16(raw) {
 
 function readI2cData() {
     /*Читаем данные*/
-    runShellCommand("i2cdump -y {} 0x70 s | grep 00: | sed -e 's/00: //g' -e 's/    .*//g'".format(config.bus), {
+    runShellCommand("i2cdump -y -r 0x01-0x0C {} 0x70 c | grep 00: | sed -e 's/00: //g' -e 's/    .*//g'".format(config.bus), {
         captureOutput: true,
         exitCallback: function(exitCode, capturedOutput) {
             if (!capturedOutput) {
@@ -121,7 +121,7 @@ function readI2cData() {
                 publish("/devices/battery/controls/Percentage/meta/error", "", 2, true);
 
                 /*Массив с полученными данными*/
-                var arrayOfData = capturedOutput.split(' ');
+                var arrayOfData = capturedOutput.trim().split(' ');
 
                 /*Сurrent*/
                 var currentRaw = parseInt("0x" + arrayOfData[6] + arrayOfData[5], 16);
