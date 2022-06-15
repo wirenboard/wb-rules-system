@@ -1,3 +1,11 @@
+wb-rules-system (1.8.1) stable; urgency=medium
+
+  * wbmz-battery: use consecutive bytes read mode to get status.
+    This should fix periodic read errors which led to incorrect values
+    published in Battery device
+
+ -- Nikita Maslov <nikita.maslov@wirenboard.ru>  Tue, 07 Jun 2022 23:19:07 +0300
+
 wb-rules-system (1.8.0) stable; urgency=medium
 
   * add support for battery and supercap modules on WB7. It's actually
