@@ -30,7 +30,12 @@ function _system_update_ip(name, iface) {
    runShellCommand('ip addr show ' + iface + ' | grep \"inet\\b\" | awk \'{print $2}\' | cut -d/ -f1',{      
       captureOutput: true,
       exitCallback: function (exitCode, capturedOutput) {
-        dev.network[name] = capturedOutput;
+        if (capturedOutput){
+          dev.network[name] = capturedOutput;
+        }
+        else {
+          dev.network[name] = " ";
+        }
       }
   });
 };
