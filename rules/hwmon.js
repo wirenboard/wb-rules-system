@@ -81,7 +81,7 @@ function readChannel(path, controlName) {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       if (exitCode == 0) {
-        dev['hwmon'][controlName] = parseFloat((parseInt(capturedOutput ) * 0.001).toFixed(3));
+        dev['hwmon'][controlName] = (parseFloat(capturedOutput) * 0.001).toFixed(3);
       }
     }
   });

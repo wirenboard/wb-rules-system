@@ -1,3 +1,9 @@
+wb-rules-system (1.8.2) stable; urgency=medium
+
+  * hwmon: remove unnecessary string to int convertion (thanks nlef!)
+
+ -- Nikita Maslov <nikita.maslov@wirenboard.ru>  Thu, 15 Sep 2022 18:18:00 +0300
+
 wb-rules-system (1.8.1) stable; urgency=medium
 
   * wbmz-battery: use consecutive bytes read mode to get status.
