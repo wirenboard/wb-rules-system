@@ -1,4 +1,4 @@
-wb-rules-system (1.8.4) stable; urgency=medium
+wb-rules-system (1.8.3) stable; urgency=medium
 
   * fix error in parse DTS version (thanks alexey_a)
 
