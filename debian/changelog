@@ -2,7 +2,7 @@ wb-rules-system (1.8.3) stable; urgency=medium
 
   * fix error in parse DTS version (thanks alexey_a)
 
- -- Andrey Radionov <andrey.radionov@wirenboard.ru>  Mon, 10 Oct 2022 11:30:00 +0300
+ -- Andrey Radionov <andrey.radionov@wirenboard.ru>  Mon, 20 Oct 2022 17:32:00 +0300
 
   * hwmon: fix conversion warning, revert 1.8.2 changes
 
