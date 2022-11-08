@@ -96,7 +96,7 @@ function initSystemDevice(hasWirenboardNode) {
     }
   });
 
-  spawn('sh', ['-c', '. /etc/wb_env.sh && echo $WB_VERSION'], {
+  spawn('bash', ['-c', '. /etc/wb_env.sh && echo $WB_VERSION'], {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       dev.system["DTS Version"] = capturedOutput;
