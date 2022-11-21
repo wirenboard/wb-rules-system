@@ -20,6 +20,10 @@ defineVirtualDevice("network", {
     "GPRS IP": {
       type: "text",
       value: ""
+    },
+    "Default Interface": {
+      type: "text",
+      value: ""
     }
   }
 });
@@ -33,12 +37,22 @@ function _system_update_ip(name, iface) {
   });
 };
 
+function _current_active_connection() {
+  runShellCommand('ip route get 1.1.1.1 | grep -oP \'dev\\s+\\K[^ ]+\'', {
+    captureOutput: true,
+    exitCallback: function (exitCode, capturedOutput) {
+      dev.network["Default Interface"] = capturedOutput;
+    }
+  });
+};
+
 function _system_update_ip_all() {
   _system_update_ip("Ethernet IP", "eth0");
   _system_update_ip("Ethernet 2 IP", "eth1");
   _system_update_ip("Wi-Fi IP", "wlan0");
   _system_update_ip("Wi-Fi 2 IP", "wlan1");
   _system_update_ip("GPRS IP", "ppp0");
+  _current_active_connection();
 };
 
 _system_update_ip_all();
