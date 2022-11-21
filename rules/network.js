@@ -21,6 +21,31 @@ defineVirtualDevice("network", {
       type: "text",
       value: ""
     },
+    "Ethernet IP Online Status": {
+      type: "switch",
+      value: false,
+      readonly: true
+    },
+    "Ethernet 2 IP Online Status": {
+      type: "switch",
+      value: false,
+      readonly: true
+    },
+    "Wi-Fi IP Online Status": {
+      type: "switch",
+      value: false,
+      readonly: true
+    },
+    "Wi-Fi 2 IP Online Status": {
+      type: "switch",
+      value: false,
+      readonly: true
+    },
+    "GPRS IP Online Status": {
+      type: "switch",
+      value: false,
+      readonly: true
+    },
     "Default Interface": {
       type: "text",
       value: ""
@@ -33,6 +58,12 @@ function _system_update_ip(name, iface) {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       dev.network[name] = capturedOutput;
+    }
+  });
+  runShellCommand('ping -q -W1 -c3 -I ' + iface + ' 1.1.1.1', {
+    captureOutput: false,
+    exitCallback: function (exitCode) {
+      dev.network[name + ' Online Status'] = exitCode === 0;
     }
   });
 };
