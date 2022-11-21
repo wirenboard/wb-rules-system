@@ -11,11 +11,11 @@ defineVirtualDevice("network", {
     },
     "Wi-Fi IP": {
       type: "text",
-      value: false
+      value: ""
     },
     "Wi-Fi 2 IP": {
       type: "text",
-      value: false
+      value: ""
     },
     "GPRS IP": {
       type: "text",
@@ -54,7 +54,7 @@ defineVirtualDevice("network", {
 });
 
 function _system_update_ip(name, iface) {
-  runShellCommand('ip addr show ' + iface + ' | grep \"inet\\b\" | awk \'{print $2}\' | cut -d/ -f1', {
+  runShellCommand('ip -o -4 addr show ' + iface + ' | awk -F \' *|/\' \'{print $4}\'', {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       dev.network[name] = capturedOutput;
