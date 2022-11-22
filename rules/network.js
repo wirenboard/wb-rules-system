@@ -49,18 +49,22 @@ defineVirtualDevice("network", {
     "Default Interface": {
       type: "text",
       value: ""
+    },
+    "Active Connection Name": {
+      type: "text",
+      value: ""
     }
   }
 });
 
 function _system_update_ip(name, iface) {
-  runShellCommand('ip -o -4 addr show ' + iface + ' | awk -F \' *|/\' \'{print $4}\'', {
+  runShellCommand('ip -o -4 addr show {} | awk -F \' *|/\' \'{print $4}\''.format(iface), {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       dev.network[name] = capturedOutput;
     }
   });
-  runShellCommand('ping -q -W1 -c3 -I ' + iface + ' 1.1.1.1', {
+  runShellCommand('ping -q -W1 -c3 -I {} 1.1.1.1'.format(iface), {
     captureOutput: false,
     exitCallback: function (exitCode) {
       dev.network[name + ' Online Status'] = exitCode === 0;
@@ -72,7 +76,17 @@ function _current_active_connection() {
   runShellCommand('ip route get 1.1.1.1 | grep -oP \'dev\\s+\\K[^ ]+\'', {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      dev.network["Default Interface"] = capturedOutput;
+      if (exitCode === 0) {
+        dev.network["Default Interface"] = capturedOutput;
+      }
+    }
+  });
+  runShellCommand('nmcli -t -f NAME c s -a', {
+    captureOutput: true,
+    exitCallback: function (exitCode, capturedOutput) {
+      if (exitCode === 0) {
+        dev.network["Active Connection Name"] = capturedOutput;
+      }
     }
   });
 };
