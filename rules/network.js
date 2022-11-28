@@ -1,3 +1,5 @@
+var checkAddress = "1.1.1.1";
+
 defineVirtualDevice("network", {
   title: "Network",
   cells: {
@@ -64,7 +66,7 @@ function _system_update_ip(name, iface) {
       dev.network[name] = capturedOutput;
     }
   });
-  runShellCommand('ping -q -W1 -c3 -I {} 1.1.1.1'.format(iface), {
+  runShellCommand('ping -q -W1 -c3 -I {} {}'.format(iface, checkAddress), {
     captureOutput: false,
     exitCallback: function (exitCode) {
       dev.network[name + ' Online Status'] = exitCode === 0;
@@ -73,7 +75,7 @@ function _system_update_ip(name, iface) {
 };
 
 function _current_active_connection() {
-  runShellCommand('ip route get 1.1.1.1 | grep -oP \'dev\\s+\\K[^ ]+\'', {
+  runShellCommand('ip route get {} | grep -oP \'dev\\s+\\K[^ ]+\''.format(checkAddress), {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       if (exitCode === 0) {
