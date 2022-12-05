@@ -24,8 +24,6 @@ var systemCells = {
   }
 };
 
-
-
 function _system_update_uptime() {
   runShellCommand('awk \'{print int($1/86400)\"d \"int(($1%86400)/3600)\"h \"int(($1%3600)/60)\"m\"}\' /proc/uptime', {
     captureOutput: true,
@@ -38,12 +36,11 @@ function _system_update_uptime() {
 spawn('sh', ['-c', '[ -d /proc/device-tree/wirenboard ]'], {
   captureOutput: true,
   exitCallback: function (exitCode, capturedOutput) {
-    var hasWirenboardNode =  (exitCode == 0);
+    var hasWirenboardNode = (exitCode == 0);
 
     initSystemDevice(hasWirenboardNode);
   }
 });
-
 
 function fillWirenboardNodeProperty(controlName, propertyName) {
   spawn('cat', ['/proc/device-tree/wirenboard/' + propertyName], {
@@ -67,15 +64,14 @@ function getReleaseInfoProperty(property, cell) {
 
 function initSystemDevice(hasWirenboardNode) {
   if (hasWirenboardNode) {
-    systemCells["HW Revision"] = {type: "text", value: ""};
-    systemCells["Batch No"] = {type: "text", value: ""};
-    systemCells["Manufacturing Date"] = {type: "text", value: ""};
-    systemCells["Temperature Grade"] = {type: "text", value: ""};
+    systemCells["HW Revision"] = { type: "text", value: "" };
+    systemCells["Batch No"] = { type: "text", value: "" };
+    systemCells["Manufacturing Date"] = { type: "text", value: "" };
+    systemCells["Temperature Grade"] = { type: "text", value: "" };
   }
 
-
   defineVirtualDevice("system", {
-    title:"System",
+    title: "System",
     cells: systemCells
   });
 
@@ -107,8 +103,8 @@ function initSystemDevice(hasWirenboardNode) {
   getReleaseInfoProperty("SUITE", "Release suite")
 
   defineRule("_system_reboot", {
-    whenChanged: [ "system/Reboot" ],
-    then: function(newValue, devName, cellName) {
+    whenChanged: ["system/Reboot"],
+    then: function (newValue, devName, cellName) {
       runShellCommand("reboot &");
     }
   });
