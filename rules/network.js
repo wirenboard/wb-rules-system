@@ -104,7 +104,7 @@ function _current_active_connection() {
           dev.network["Internet Connection"] = con_name;
         }
       }
-      dev.network["Active Connections"] = JSON.stringify(active_connections);
+      dev.network["Active Connections"] = JSON.stringify(active_connections.sort());
     }
   });
 };
