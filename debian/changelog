@@ -1,6 +1,7 @@
 wb-rules-system (1.8.6) stable; urgency=medium
 
-  * network: fix 'Active Connection Name' control, cleanup logs
+  * network: split 'Active Connection Name' control into 'Active Connections'
+    and 'Internet Connection' controls, cleanup logs
 
  -- Nikolay Korotkiy <nikolay.korotkiy@wirenboard.com>  Tue, 10 Jan 2023 12:25:00 +0400
 

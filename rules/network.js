@@ -52,7 +52,11 @@ defineVirtualDevice("network", {
       type: "text",
       value: ""
     },
-    "Active Connection Name": {
+    "Active Connections": {
+      type: "text",
+      value: ""
+    },
+    "Internet Connection": {
       type: "text",
       value: ""
     }
@@ -78,7 +82,7 @@ function _current_active_connection() {
   runShellCommand('ip route get {} 2>/dev/null | grep -oP \'dev\\s+\\K[^ ]+\''.format(checkAddress), {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      dev.network["Default Interface"] = exitCode === 0 ? capturedOutput : "";
+      dev.network["Default Interface"] = exitCode === 0 ? capturedOutput.trim() : "";
     }
   });
 
@@ -86,15 +90,21 @@ function _current_active_connection() {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       if (exitCode != 0) {
-        dev.network["Active Connection Name"] = "";
+        dev.network["Active Connections"] = "";
+        dev.network["Internet Connection"] = "";
         return;
       }
       var lines = capturedOutput.split("\n");
-      for (var i = 0; i < lines.length; i++) {
-        if (lines[i].indexOf(dev.network["Default Interface"] + ":") === 0) {
-          dev.network["Active Connection Name"] = lines[i].split(":")[1];
+      var active_connections = [];
+      for (var i = 0; i < lines.length - 1; i++) {
+        var dev_name = (lines[i].split(":")[0]).trim();
+        var con_name = (lines[i].split(":")[1]).trim();
+        active_connections.push(con_name);
+        if (dev_name === dev.network["Default Interface"]) {
+          dev.network["Internet Connection"] = con_name;
         }
       }
+      dev.network["Active Connections"] = JSON.stringify(active_connections);
     }
   });
 };
