@@ -1,3 +1,9 @@
+wb-rules-system (1.8.6) stable; urgency=medium
+
+  * network: fix 'Active Connection Name' control, cleanup logs
+
+ -- Nikolay Korotkiy <nikolay.korotkiy@wirenboard.com>  Tue, 10 Jan 2023 12:25:00 +0400
+
 wb-rules-system (1.8.5) stable; urgency=medium
 
   * network: add online status and default connection controls
