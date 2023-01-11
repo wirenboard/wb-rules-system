@@ -3,6 +3,14 @@ var checkAddress = "1.1.1.1";
 defineVirtualDevice("network", {
   title: "Network",
   cells: {
+    "Active Connections": {
+      type: "text",
+      value: ""
+    },
+    "Default Interface": {
+      type: "text",
+      value: ""
+    },
     "Ethernet IP": {
       type: "text",
       value: ""
@@ -33,6 +41,10 @@ defineVirtualDevice("network", {
       value: false,
       readonly: true
     },
+    "Internet Connection": {
+      type: "text",
+      value: ""
+    },
     "Wi-Fi IP Online Status": {
       type: "switch",
       value: false,
@@ -47,18 +59,6 @@ defineVirtualDevice("network", {
       type: "switch",
       value: false,
       readonly: true
-    },
-    "Default Interface": {
-      type: "text",
-      value: ""
-    },
-    "Active Connections": {
-      type: "text",
-      value: ""
-    },
-    "Internet Connection": {
-      type: "text",
-      value: ""
     }
   }
 });
