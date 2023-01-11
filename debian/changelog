@@ -1,4 +1,4 @@
-wb-rules-system (1.8.6) stable; urgency=medium
+wb-rules-system (1.9.0) stable; urgency=medium
 
   * network: split 'Active Connection Name' control into 'Active Connections'
     and 'Internet Connection' controls, cleanup logs

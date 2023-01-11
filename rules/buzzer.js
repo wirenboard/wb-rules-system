@@ -30,7 +30,7 @@
         pwm_number = parseInt(capturedOutput);
       }
 
-      runShellCommand("echo {} > {}/export".format(pwm_number, pwm_sys));
+      runShellCommand("[ -e /sys/class/pwm/pwmchip0/pwm{0} ] || echo {0} > {1}/export".format(pwm_number, pwm_sys));
     }
   });
 
