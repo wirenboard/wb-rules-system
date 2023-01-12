@@ -3,7 +3,15 @@ var checkAddress = "1.1.1.1";
 defineVirtualDevice("network", {
   title: "Network",
   cells: {
-    "Ethernet IP": {
+    "Active Connections": {
+      type: "text",
+      value: ""
+    },
+    "Default Interface": {
+      type: "text",
+      value: ""
+    },
+    "Ethernet 1 IP": {
       type: "text",
       value: ""
     },
@@ -11,7 +19,7 @@ defineVirtualDevice("network", {
       type: "text",
       value: ""
     },
-    "Wi-Fi IP": {
+    "Wi-Fi 1 IP": {
       type: "text",
       value: ""
     },
@@ -23,7 +31,7 @@ defineVirtualDevice("network", {
       type: "text",
       value: ""
     },
-    "Ethernet IP Online Status": {
+    "Ethernet 1 IP Online Status": {
       type: "switch",
       value: false,
       readonly: true
@@ -33,7 +41,11 @@ defineVirtualDevice("network", {
       value: false,
       readonly: true
     },
-    "Wi-Fi IP Online Status": {
+    "Internet Connection": {
+      type: "text",
+      value: ""
+    },
+    "Wi-Fi 1 IP Online Status": {
       type: "switch",
       value: false,
       readonly: true
@@ -47,26 +59,18 @@ defineVirtualDevice("network", {
       type: "switch",
       value: false,
       readonly: true
-    },
-    "Default Interface": {
-      type: "text",
-      value: ""
-    },
-    "Active Connection Name": {
-      type: "text",
-      value: ""
     }
   }
 });
 
 function _system_update_ip(name, iface) {
-  runShellCommand('ip -o -4 addr show {} | awk -F \' *|/\' \'{print $4}\''.format(iface), {
+  runShellCommand('ip -o -4 addr show {} 2>/dev/null | awk -F \' *|/\' \'{print $4}\''.format(iface), {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       dev.network[name] = capturedOutput;
     }
   });
-  runShellCommand('ping -q -W1 -c3 -I {} {}'.format(iface, checkAddress), {
+  runShellCommand('ping -q -W1 -c3 -I {} {} 2>/dev/null'.format(iface, checkAddress), {
     captureOutput: false,
     exitCallback: function (exitCode) {
       dev.network[name + ' Online Status'] = exitCode === 0;
@@ -75,28 +79,40 @@ function _system_update_ip(name, iface) {
 };
 
 function _current_active_connection() {
-  runShellCommand('ip route get {} | grep -oP \'dev\\s+\\K[^ ]+\''.format(checkAddress), {
+  runShellCommand('ip route get {} 2>/dev/null | grep -oP \'dev\\s+\\K[^ ]+\''.format(checkAddress), {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      if (exitCode === 0) {
-        dev.network["Default Interface"] = capturedOutput;
-      }
+      dev.network["Default Interface"] = exitCode === 0 ? capturedOutput.trim() : "";
     }
   });
-  runShellCommand('nmcli -t -f NAME c s -a', {
+
+  runShellCommand("nmcli -t -f DEVICE,NAME c s -a 2>/dev/null", {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      if (exitCode === 0) {
-        dev.network["Active Connection Name"] = capturedOutput;
+      if (exitCode != 0) {
+        dev.network["Active Connections"] = "";
+        dev.network["Internet Connection"] = "";
+        return;
       }
+      var lines = capturedOutput.split("\n");
+      var active_connections = [];
+      for (var i = 0; i < lines.length - 1; i++) {
+        var dev_name = (lines[i].split(":")[0]).trim();
+        var con_name = (lines[i].split(":")[1]).trim();
+        active_connections.push(con_name);
+        if (dev_name === dev.network["Default Interface"]) {
+          dev.network["Internet Connection"] = con_name;
+        }
+      }
+      dev.network["Active Connections"] = JSON.stringify(active_connections.sort());
     }
   });
 };
 
 function _system_update_ip_all() {
-  _system_update_ip("Ethernet IP", "eth0");
+  _system_update_ip("Ethernet 1 IP", "eth0");
   _system_update_ip("Ethernet 2 IP", "eth1");
-  _system_update_ip("Wi-Fi IP", "wlan0");
+  _system_update_ip("Wi-Fi 1 IP", "wlan0");
   _system_update_ip("Wi-Fi 2 IP", "wlan1");
   _system_update_ip("GPRS IP", "ppp0");
   _current_active_connection();

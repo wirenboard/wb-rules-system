@@ -1,3 +1,10 @@
+wb-rules-system (1.9.0) stable; urgency=medium
+
+  * network: split 'Active Connection Name' control into 'Active Connections'
+    and 'Internet Connection' controls, cleanup logs
+
+ -- Nikolay Korotkiy <nikolay.korotkiy@wirenboard.com>  Tue, 10 Jan 2023 12:25:00 +0400
+
 wb-rules-system (1.8.5) stable; urgency=medium
 
   * network: add online status and default connection controls

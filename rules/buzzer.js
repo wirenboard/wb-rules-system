@@ -1,6 +1,6 @@
 (function () {
   defineVirtualDevice("buzzer", {
-    title: "Buzzer", //
+    title: "Buzzer",
 
     cells: {
       frequency: {
@@ -20,6 +20,7 @@
     }
   });
 
+  var pwm_sys = "/sys/class/pwm/pwmchip0";
   var pwm_number = 2;
 
   runShellCommand("bash -c '. /etc/wb_env.sh && echo -n $WB_PWM_BUZZER'", {
@@ -29,7 +30,7 @@
         pwm_number = parseInt(capturedOutput);
       }
 
-      runShellCommand("echo " + pwm_number + "  > /sys/class/pwm/pwmchip0/export");
+      runShellCommand("[ -e {0}/pwm{1} ] || echo {1} > {0}/export".format(pwm_sys, pwm_number));
     }
   });
 
@@ -37,8 +38,8 @@
     var period = parseInt(1.0 / dev.buzzer.frequency * 1E9);
     var duty_cycle = parseInt(dev.buzzer.volume * 1.0 / 100 * period * 0.5);
 
-    runShellCommand("echo " + period + " > /sys/class/pwm/pwmchip0/pwm" + pwm_number + "/period");
-    runShellCommand("echo " + duty_cycle + " > /sys/class/pwm/pwmchip0/pwm" + pwm_number + "/duty_cycle");
+    runShellCommand("echo {} > {}/pwm{}/period".format(period, pwm_sys, pwm_number));
+    runShellCommand("echo {} > {}/pwm{}/duty_cycle".format(duty_cycle, pwm_sys, pwm_number));
   };
 
   defineRule("_system_buzzer_params", {
@@ -59,10 +60,8 @@
     then: function (newValue, devName, cellName) {
       if (dev.buzzer.enabled) {
         _buzzer_set_params();
-        runShellCommand("echo 1  > /sys/class/pwm/pwmchip0/pwm" + pwm_number + "/enable");
-      } else {
-        runShellCommand("echo 0  > /sys/class/pwm/pwmchip0/pwm" + pwm_number + "/enable");
       }
+      runShellCommand("echo {} > {}/pwm{}/enable".format(dev.buzzer.enabled ? 1 : 0, pwm_sys, pwm_number));
     }
   });
 })();
