@@ -1,3 +1,11 @@
+wb-rules-system (1.9.2) stable; urgency=medium
+
+  * network: cell namings fixup to preserve compatibility with homeui dashboards
+    "Wi-Fi 1 ..." -> "Wi-Fi ..."
+    "Ethernet 1 ..." -> "Ethernet ..."
+
+ -- Vladimir Romanov <v.romanov@wirenboard.com>  Thu, 09 Mar 2023 15:30:19 +0400
+
 wb-rules-system (1.9.1) stable; urgency=medium
 
   * Fix buzzer
