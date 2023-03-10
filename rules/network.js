@@ -1,6 +1,9 @@
 var checkAddress = "1.1.1.1";
 
 defineVirtualDevice("network", {
+  /*
+  While editing cell names, mind compatibility with existing homeui dashboards!
+  */
   title: "Network",
   cells: {
     "Active Connections": {
@@ -11,7 +14,7 @@ defineVirtualDevice("network", {
       type: "text",
       value: ""
     },
-    "Ethernet 1 IP": {
+    "Ethernet IP": {
       type: "text",
       value: ""
     },
@@ -19,7 +22,7 @@ defineVirtualDevice("network", {
       type: "text",
       value: ""
     },
-    "Wi-Fi 1 IP": {
+    "Wi-Fi IP": {
       type: "text",
       value: ""
     },
@@ -31,7 +34,7 @@ defineVirtualDevice("network", {
       type: "text",
       value: ""
     },
-    "Ethernet 1 IP Online Status": {
+    "Ethernet IP Online Status": {
       type: "switch",
       value: false,
       readonly: true
@@ -45,7 +48,7 @@ defineVirtualDevice("network", {
       type: "text",
       value: ""
     },
-    "Wi-Fi 1 IP Online Status": {
+    "Wi-Fi IP Online Status": {
       type: "switch",
       value: false,
       readonly: true
@@ -110,9 +113,9 @@ function _current_active_connection() {
 };
 
 function _system_update_ip_all() {
-  _system_update_ip("Ethernet 1 IP", "eth0");
+  _system_update_ip("Ethernet IP", "eth0");
   _system_update_ip("Ethernet 2 IP", "eth1");
-  _system_update_ip("Wi-Fi 1 IP", "wlan0");
+  _system_update_ip("Wi-Fi IP", "wlan0");
   _system_update_ip("Wi-Fi 2 IP", "wlan1");
   _system_update_ip("GPRS IP", "ppp0");
   _current_active_connection();
