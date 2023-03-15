@@ -1,3 +1,9 @@
+wb-rules-system (2.0.0) stable; urgency=medium
+
+  * add initial version of integrations module
+
+ -- Nikita Maslov <nikita.maslov@wirenboard.ru>  Wed, 15 Mar 2023 18:33:21 +0600
+
 wb-rules-system (1.9.1) stable; urgency=medium
 
   * Fix buzzer
