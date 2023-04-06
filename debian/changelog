@@ -1,3 +1,9 @@
+wb-rules-system (1.9.3) stable; urgency=medium
+
+  * Fix bug with duplicated IP Addresses in Network device
+
+ -- Aleksandr Kazadaev <aleksandr.kazadaev@wirenboard.com>  Wed, 6 Apr 2023 13:49:44 +0600
+
 wb-rules-system (1.9.2) stable; urgency=medium
 
   * network: cell namings fixup to preserve compatibility with homeui dashboards
