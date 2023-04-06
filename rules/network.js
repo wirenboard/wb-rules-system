@@ -67,7 +67,7 @@ defineVirtualDevice("network", {
 });
 
 function _system_update_ip(name, iface) {
-  runShellCommand('ip -o -4 addr show {} 2>/dev/null | awk -F \' *|/\' \'{print $4}\''.format(iface), {
+  runShellCommand('ip -o -4 addr show {} 2>/dev/null | awk -F \' *|/\' \'{print $4}\' | sort | uniq'.format(iface), {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       dev.network[name] = capturedOutput;
