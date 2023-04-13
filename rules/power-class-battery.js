@@ -86,7 +86,7 @@ function createControlOrSetValue(vdevObj, controlName, controlDesc, initialValue
     vdevObj.addControl(controlName, desc);
   };
 
-  vdevObj.getControl(controlName).setValue({ value: initialValue, notify: false });
+  vdevObj.getControl(controlName).setValue({ value: initialValue });
 }
 
 function updateControl(vdevObj, psData, psPropertyName, controlName, controlType, scale, precision) {
