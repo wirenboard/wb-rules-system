@@ -50,14 +50,14 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
         min: setpointMin,
       },
       devState: {
-        title: "Climate State",
+        title: "State",
         type: "text",
         readonly: true,
-        value: "SUSPEND",
+        value: "OFF",
         order: 40,
       },
       devEnabled: {
-        title: "Enable Climate Control",
+        title: "Enable",
         type: "switch",
         value: 1,
         readonly: false,
@@ -68,7 +68,7 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
 }
 
 /**
- * Creates climate control virtual device.
+ * Creates thermal control virtual device.
  *
  * @constructor
  *
@@ -201,7 +201,7 @@ exports.ThermalControlDevice = function (config) {
         } else if (cool) {
           dev[devName]["devState"] = "COOLING";
         } else {
-          dev[devName]["devState"] = "SUSPEND";
+          dev[devName]["devState"] = "OFF";
         }
       }
     }.bind(this),
@@ -218,7 +218,7 @@ exports.ThermalControlDevice = function (config) {
     whenChanged: devName + "/devEnabled",
     then: function (value) {
       if (value) {
-        dev[devName]["devState"] = "SUSPEND";
+        dev[devName]["devState"] = "OFF";
         log("Thermostat " + config.devTitle + " ENABLED now");
         enableRule(this._regulationRule);
         runRule(this._regulationRule);
