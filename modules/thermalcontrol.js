@@ -29,10 +29,19 @@ exports.bindControls = function (config) {
   });
 };
 
+// Thermal control device:
+
 function _defineThermalControlDevice(config, setpointMin, setpointMax) {
   return defineVirtualDevice(config.devName, {
     title: config.devTitle,
     cells: {
+      devEnabled: {
+        title: "Enable",
+        type: "switch",
+        value: 1,
+        readonly: false,
+        order: 1,
+      },
       temperature: {
         title: "Temperature",
         type: "value",
@@ -56,13 +65,6 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
         value: "OFF",
         order: 40,
       },
-      devEnabled: {
-        title: "Enable",
-        type: "switch",
-        value: 1,
-        readonly: false,
-        order: 90,
-      },
     },
   });
 }
@@ -75,7 +77,7 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
  * @param {Object} config - Configurtaion of this countdown switch.
  * @param {string} [config.devName] - Name for a virtual device (should be valid MQTT subtopic).
  * @param {string} [config.devTitle] - Title for the timer's virtual device (any Unicode string).
- * @param {Object} [config.modes] - List of allowed modes.
+ * @param {string[]} [config.modes] - List of allowed modes. May be "heating" and "cooling".
  * @param {string} [config.temperatureSource] - Source of temperature, must be valid MQTT subtopic.
  * @param {string} [config.heatingChannel] - Source of switch of real heating device, must be valid MQTT subtopic.
  * @param {string} [config.coolingChannel] - Source of switch of real cooling device, must be valid MQTT subtopic.
@@ -84,13 +86,11 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
  * @example
  *
  * var libtherm = require("thermalcontrol");
- * 
+ *
  * config = ({
  *     devName: "climate_kitchen",
  *     devTitle: "Температура на кухне",
- *     modes: { 
- *         "heating": true,
- *         "cooling": true
+ *     modes: ["heating", "cooling"]
  *     },
  *     temperatureSource: "wb-w1/somesensor",
  *     heatingChannel: "wb-gpio/EXT2_R3A1",
@@ -101,7 +101,7 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
  *     },
  *     hysteresis: 1
  * });
- * 
+ *
  *
  * var climate_in_kitchen = new libtherm.ThermalControlDevice(config);
  *
@@ -116,17 +116,23 @@ exports.ThermalControlDevice = function (config) {
   var setpointMax = 35.0;
 
   if (config.hasOwnProperty("setpointrange")) {
-    log("OK1");
     if (!isNaN(parseFloat(config.setpointrange.min))) {
       setpointMin = parseFloat(config.setpointrange.min);
     } else {
-      throw new Error("Problem with setpoint min value (", parseFloat(config.setpointrange.min), ")");
+      throw new Error(
+        "Problem with setpoint min value (",
+        parseFloat(config.setpointrange.min),
+        ")"
+      );
     }
-    log("OK2");
     if (!isNaN(parseFloat(config.setpointrange.max))) {
       setpointMax = parseFloat(config.setpointrange.max);
     } else {
-      throw new Error("Problem with setpoint max value (", parseFloat(config.setpointrange.max), ")");
+      throw new Error(
+        "Problem with setpoint max value (",
+        parseFloat(config.setpointrange.max),
+        ")"
+      );
     }
   }
 
@@ -139,31 +145,26 @@ exports.ThermalControlDevice = function (config) {
   coolingChannel = config.coolingChannel;
   hysteresis = parseFloat(config.hysteresis);
 
-  log(
-    "New thermal control device: " +
-      config.devName +
-      " " +
-      '"' +
-      config.devTitle +
-      '"' +
-      "\nTemperature source: " +
-      config.temperatureSource +
-      "\nHeating switch control: " +
-      config.heatingChannel +
-      "\nCooling switch control: " +
-      config.coolingChannel +
-      "\nModes: {heating : " +
-      config.modes.heating +
-      ", cooling : " +
-      config.modes.cooling +
-      "}" +
-      "\nSetpoint range: {min : " +
-      setpointMin +
-      ", max : " +
-      setpointMax +
-      "}" +
-      "\nHysteresis: " +
+  log.debug(
+    "New thermal control device:\
+    \nName: {}\
+    \nTitle: {},\
+    \nTemperature source: {}\
+    \nHeating switch control: {}\
+    \nCooling switch control: {}\
+    \nModes: {}\
+    \nSetpoint range: [min : {}, max : {}]\
+    \nHysteresis: {}.".format(
+      config.devName,
+      config.devTitle,
+      config.temperatureSource,
+      config.heatingChannel,
+      config.coolingChannel,
+      JSON.stringify(config.modes, null, 0),
+      setpointMin,
+      setpointMax,
       config.hysteresis
+    )
   );
 
   this._device = _defineThermalControlDevice(config, setpointMin, setpointMax);
@@ -190,10 +191,8 @@ exports.ThermalControlDevice = function (config) {
       }
       //
       if (dev[devName]["devEnabled"]) {
-        log("heat ", heat, Boolean(config.modes.heating));
-        log("cool ", heat, Boolean(config.modes.cooling));
-        heat = heat && Boolean(config.modes.heating);
-        cool = cool && Boolean(config.modes.cooling);
+        heat = heat && config.modes.indexOf("heating") !== -1;
+        cool = cool && config.modes.indexOf("cooling") !== -1;
         dev[heatingChannel] = heat;
         dev[coolingChannel] = cool;
         if (heat) {
@@ -219,7 +218,7 @@ exports.ThermalControlDevice = function (config) {
     then: function (value) {
       if (value) {
         dev[devName]["devState"] = "OFF";
-        log("Thermostat " + config.devTitle + " ENABLED now");
+        log.debug("Thermostat {} ENABLED now".format(config.devTitle));
         enableRule(this._regulationRule);
         runRule(this._regulationRule);
       } else {
@@ -227,7 +226,7 @@ exports.ThermalControlDevice = function (config) {
         dev[devName]["devState"] = "DISABLED";
         dev[heatingChannel] = false;
         dev[coolingChannel] = false;
-        log("Thermostat " + config.devTitle + " DISABLED now");
+        log.debug("Thermostat {} disabled now".format(config.devTitle));
       }
     }.bind(this),
   });
@@ -238,22 +237,16 @@ exports.ThermalControlDevice = function (config) {
       setpoint = dev[devName]["setpoint"];
       if (setpoint > setpointMax) {
         dev[devName]["setpoint"] = setpointMax;
-        log(
-          "You tried to set setpoint (",
-          setpoint,
-          ") greater than maximum setting (",
-          setpointMax,
-          ")"
+        log.error(
+          "You tried to set setpoint ({})\
+          greater than maximum setting ({}})".format(setpoint, setpointMax)
         );
       }
       if (setpoint < setpointMin) {
         dev[devName]["setpoint"] = setpointMin;
-        log(
-          "You tried to set setpoint (",
-          setpoint,
-          ") lower than minimum setting (",
-          setpointMin,
-          ")"
+        log.error(
+          "You tried to set setpoint ({})\
+          lower than maximum setting ({}})".format(setpoint, setpointMin)
         );
       }
       runRule(this._regulationRule);
