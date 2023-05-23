@@ -65,6 +65,13 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
         value: "OFF",
         order: 40,
       },
+      hysteresis: {
+        title: "Hysteresis",
+        type: "value",
+        readonly: true,
+        value: 0,
+        order: 90
+      },
     },
   });
 }
@@ -120,6 +127,8 @@ exports.ThermalControlDevice = function (config) {
       )
     );
   }
+  devName = config.devName;
+
   if (config.hasOwnProperty("hysteresis") && config.hysteresis < 0) {
     throw new Error(
       "{}:[Hysteresis can not be negative]".format(format(config.devName))
@@ -170,7 +179,6 @@ exports.ThermalControlDevice = function (config) {
     throw new Error("Maximal setpoint value must be greater than minimal");
   }
 
-  devName = config.devName;
 
   if (config.debug)
     log.debug(
@@ -294,5 +302,6 @@ exports.ThermalControlDevice = function (config) {
     }.bind(this),
   });
 
+  dev[devName]["hysteresis"] = hysteresis;
   runRule(this._setpointControl);
 };
