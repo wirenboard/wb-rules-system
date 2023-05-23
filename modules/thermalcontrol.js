@@ -182,7 +182,7 @@ exports.ThermalControlDevice = function (config) {
 
   if (config.debug)
     log.debug(
-      "{}:[New thermal control device:\
+      "[New thermal control device:\
     \nName: {}\
     \nTitle: {},\
     \nTemperature source: {}\
@@ -191,7 +191,6 @@ exports.ThermalControlDevice = function (config) {
     \nModes: {}\
     \nSetpoint range: [min : {}, max : {}]\
     \nHysteresis: {}.]".format(
-        devName,
         devName,
         config.devTitle,
         config.temperatureSource,
@@ -205,6 +204,7 @@ exports.ThermalControlDevice = function (config) {
     );
 
   this._device = _defineThermalControlDevice(config, setpointMin, setpointMax);
+  var persist = new PersistentStorage("thermalcontrol", {global: true});
 
   this._regulationRule = defineRule({
     whenChanged: devName + "/temperature",
@@ -276,6 +276,7 @@ exports.ThermalControlDevice = function (config) {
     whenChanged: devName + "/setpoint",
     then: function () {
       setpoint = dev[devName]["setpoint"];
+      persist[devName+"_setpoint"] = setpoint;
       if (setpoint > setpointMax) {
         dev[devName]["setpoint"] = setpointMax;
         log.error(
@@ -304,4 +305,10 @@ exports.ThermalControlDevice = function (config) {
 
   dev[devName]["hysteresis"] = hysteresis;
   runRule(this._setpointControl);
+
+  if (!isNaN(persist[devName+"_setpoint"])){
+    (dev[devName]["setpoint"] = persist[devName+"_setpoint"]);
+  } else {
+    persist[devName+"_setpoint"] = dev[devName]["setpoint"];
+  }
 };
