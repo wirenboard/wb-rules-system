@@ -83,6 +83,7 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
  * @param {string} [config.coolingChannel] - Source of switch of real cooling device, must be valid MQTT subtopic.
  * @param {Object} [config.setpointrange] - Range of thermal setpoint.
  * @param {float} [config.hysteresis] - Value of thermal hysteresis.
+ * @param {boolean} [config.debug] - Allow logging.
  * @example
  *
  * var libtherm = require("thermalcontrol");
@@ -99,7 +100,8 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
  *         "min": 6,
  *         "max": 35
  *     },
- *     hysteresis: 1
+ *     hysteresis: 1,
+ *     degug: true
  * });
  *
  *
@@ -108,8 +110,38 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
  */
 
 exports.ThermalControlDevice = function (config) {
+  if (!config.hasOwnProperty("devName")) {
+    throw new Error("There are no device ID in config!");
+  }
+  if (!config.hasOwnProperty("temperatureSource")) {
+    throw new Error(
+      "{}:[There are no temperature source in config!]".format(
+        format(config.devName)
+      )
+    );
+  }
   if (config.hasOwnProperty("hysteresis") && config.hysteresis < 0) {
-    throw new Error("Hysteresis can not be negative");
+    throw new Error(
+      "{}:[Hysteresis can not be negative]".format(format(config.devName))
+    );
+  }
+  heatingChannel = "";
+  heatingChannelPresent = false;
+  if (config.hasOwnProperty("heatingChannel")) {
+    heatingChannel = config.heatingChannel;
+    heatingChannelPresent = true;
+  }
+  coolingChannel = "";
+  coolingChannelPresent = false;
+  if (config.hasOwnProperty("coolingChannel")) {
+    coolingChannel = config.coolingChannel;
+    coolingChannelPresent = true;
+  }
+
+  hysteresis = 1.0;
+
+  if (!isNaN(parseFloat(config.hysteresis))) {
+    hysteresis = parseFloat(config.hysteresis);
   }
 
   var setpointMin = 5.0;
@@ -119,19 +151,17 @@ exports.ThermalControlDevice = function (config) {
     if (!isNaN(parseFloat(config.setpointrange.min))) {
       setpointMin = parseFloat(config.setpointrange.min);
     } else {
-      throw new Error(
-        "Problem with setpoint min value (",
-        parseFloat(config.setpointrange.min),
-        ")"
+      throw new Error("{}:[Problem with setpoint: bad min value ({})]").format(
+        config.devName,
+        parseFloat(config.setpointrange.min)
       );
     }
     if (!isNaN(parseFloat(config.setpointrange.max))) {
       setpointMax = parseFloat(config.setpointrange.max);
     } else {
-      throw new Error(
-        "Problem with setpoint max value (",
-        parseFloat(config.setpointrange.max),
-        ")"
+      throw new Error("{}:[Problem with setpoint: bad max value ({})]").format(
+        config.devName,
+        parseFloat(config.setpointrange.max)
       );
     }
   }
@@ -141,12 +171,10 @@ exports.ThermalControlDevice = function (config) {
   }
 
   devName = config.devName;
-  heatingChannel = config.heatingChannel;
-  coolingChannel = config.coolingChannel;
-  hysteresis = parseFloat(config.hysteresis);
 
-  log.debug(
-    "New thermal control device:\
+  if (config.debug)
+    log.debug(
+      "{}:[New thermal control device:\
     \nName: {}\
     \nTitle: {},\
     \nTemperature source: {}\
@@ -154,18 +182,19 @@ exports.ThermalControlDevice = function (config) {
     \nCooling switch control: {}\
     \nModes: {}\
     \nSetpoint range: [min : {}, max : {}]\
-    \nHysteresis: {}.".format(
-      config.devName,
-      config.devTitle,
-      config.temperatureSource,
-      config.heatingChannel,
-      config.coolingChannel,
-      JSON.stringify(config.modes, null, 0),
-      setpointMin,
-      setpointMax,
-      config.hysteresis
-    )
-  );
+    \nHysteresis: {}.]".format(
+        devName,
+        devName,
+        config.devTitle,
+        config.temperatureSource,
+        heatingChannel,
+        coolingChannel,
+        JSON.stringify(config.modes, null, 0),
+        setpointMin,
+        setpointMax,
+        hysteresis
+      )
+    );
 
   this._device = _defineThermalControlDevice(config, setpointMin, setpointMax);
 
@@ -174,8 +203,8 @@ exports.ThermalControlDevice = function (config) {
     then: function () {
       setpoint = dev[devName]["setpoint"];
       temperature = dev[devName]["temperature"];
-      heat = dev[heatingChannel];
-      cool = dev[coolingChannel];
+      heat = dev[devName]["devState"] == "HEATING";
+      cool = dev[devName]["devState"] == "COOLING";
       // thermostat core
       if (temperature < setpoint) {
         cool = false;
@@ -191,10 +220,12 @@ exports.ThermalControlDevice = function (config) {
       }
       //
       if (dev[devName]["devEnabled"]) {
-        heat = heat && config.modes.indexOf("heating") !== -1;
-        cool = cool && config.modes.indexOf("cooling") !== -1;
-        dev[heatingChannel] = heat;
-        dev[coolingChannel] = cool;
+        if (config.hasOwnProperty("modes")) {
+          heat = heat && config.modes.indexOf("heating") !== -1;
+          cool = cool && config.modes.indexOf("cooling") !== -1;
+        }
+        if (heatingChannelPresent) dev[heatingChannel] = heat;
+        if (coolingChannelPresent) dev[coolingChannel] = cool;
         if (heat) {
           dev[devName]["devState"] = "HEATING";
         } else if (cool) {
@@ -218,15 +249,17 @@ exports.ThermalControlDevice = function (config) {
     then: function (value) {
       if (value) {
         dev[devName]["devState"] = "OFF";
-        log.debug("Thermostat {} ENABLED now".format(config.devTitle));
+        if (config.debug)
+          log.debug("{}:[Thermostat ENABLED now]".format(devName));
         enableRule(this._regulationRule);
         runRule(this._regulationRule);
       } else {
         disableRule(this._regulationRule);
         dev[devName]["devState"] = "DISABLED";
-        dev[heatingChannel] = false;
-        dev[coolingChannel] = false;
-        log.debug("Thermostat {} disabled now".format(config.devTitle));
+        if (heatingChannelPresent) dev[heatingChannel] = false;
+        if (coolingChannelPresent) dev[coolingChannel] = false;
+        if (config.debug)
+          log.debug("{}:[Thermostat disabled now]".format(devName));
       }
     }.bind(this),
   });
@@ -238,15 +271,23 @@ exports.ThermalControlDevice = function (config) {
       if (setpoint > setpointMax) {
         dev[devName]["setpoint"] = setpointMax;
         log.error(
-          "You tried to set setpoint ({})\
-          greater than maximum setting ({}})".format(setpoint, setpointMax)
+          "{}:[You tried to set setpoint ({})\
+          greater than maximum setting ({}})]".format(
+            devName,
+            setpoint,
+            setpointMax
+          )
         );
       }
       if (setpoint < setpointMin) {
         dev[devName]["setpoint"] = setpointMin;
         log.error(
-          "You tried to set setpoint ({})\
-          lower than maximum setting ({}})".format(setpoint, setpointMin)
+          "{}:[You tried to set setpoint ({})\
+          lower than maximum setting ({}})]".format(
+            devName,
+            setpoint,
+            setpointMin
+          )
         );
       }
       runRule(this._regulationRule);
