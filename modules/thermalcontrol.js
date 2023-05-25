@@ -98,8 +98,7 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
  * config = ({
  *     devName: "climate_kitchen",
  *     devTitle: "Температура на кухне",
- *     modes: ["heating", "cooling"]
- *     },
+ *     modes: ["heating", "cooling"],
  *     temperatureSource: "wb-w1/somesensor",
  *     heatingChannel: "wb-gpio/EXT2_R3A1",
  *     coolingChannel: "wb-gpio/EXT2_R3A2",
