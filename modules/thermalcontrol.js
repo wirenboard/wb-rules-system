@@ -31,7 +31,7 @@ exports.bindControls = function (config) {
 
 // Thermal control device:
 
-function _defineThermalControlDevice(config, setpointMin, setpointMax) {
+function _defineThermalControlDevice(config, setpointDefault) {
   return defineVirtualDevice(config.devName, {
     title: config.devTitle,
     cells: {
@@ -51,12 +51,10 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
       },
       setpoint: {
         title: "Setpoint",
-        type: "range",
+        type: "value",
         readonly: false,
-        value: "23.0",
+        value: setpointDefault,
         order: 30,
-        max: setpointMax,
-        min: setpointMin,
       },
       devState: {
         title: "State",
@@ -70,7 +68,7 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
         type: "value",
         readonly: true,
         value: 0,
-        order: 90
+        order: 90,
       },
     },
   });
@@ -88,7 +86,7 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
  * @param {string} [config.temperatureSource] - Source of temperature, must be valid MQTT subtopic.
  * @param {string} [config.heatingChannel] - Source of switch of real heating device, must be valid MQTT subtopic.
  * @param {string} [config.coolingChannel] - Source of switch of real cooling device, must be valid MQTT subtopic.
- * @param {Object} [config.setpointrange] - Range of thermal setpoint.
+ * @param {Object} [config.setpoint] - Range and default value of thermal setpoint.
  * @param {float} [config.hysteresis] - Value of thermal hysteresis.
  * @param {boolean} [config.debug] - Allow logging.
  * @example
@@ -102,9 +100,10 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
  *     temperatureSource: "wb-w1/somesensor",
  *     heatingChannel: "wb-gpio/EXT2_R3A1",
  *     coolingChannel: "wb-gpio/EXT2_R3A2",
- *     setpointrange: {
+ *     setpoint: {
  *         "min": 6,
- *         "max": 35
+ *         "max": 35,
+ *         "default": 23
  *     },
  *     hysteresis: 1,
  *     degug: true
@@ -154,42 +153,56 @@ exports.ThermalControlDevice = function (config) {
 
   var setpointMin = 5.0;
   var setpointMax = 35.0;
+  var setpointDefault = 23.0;
 
-  if (config.hasOwnProperty("setpointrange")) {
-    if (!isNaN(parseFloat(config.setpointrange.min))) {
-      setpointMin = parseFloat(config.setpointrange.min);
+  if (config.hasOwnProperty("setpoint")) {
+    if (!isNaN(parseFloat(config.setpoint.min))) {
+      setpointMin = parseFloat(config.setpoint.min);
     } else {
       throw new Error("{}:[Problem with setpoint: bad min value ({})]").format(
         config.devName,
-        parseFloat(config.setpointrange.min)
+        parseFloat(config.setpoint.min)
       );
     }
-    if (!isNaN(parseFloat(config.setpointrange.max))) {
-      setpointMax = parseFloat(config.setpointrange.max);
+    if (!isNaN(parseFloat(config.setpoint.max))) {
+      setpointMax = parseFloat(config.setpoint.max);
     } else {
       throw new Error("{}:[Problem with setpoint: bad max value ({})]").format(
         config.devName,
-        parseFloat(config.setpointrange.max)
+        parseFloat(config.setpoint.max)
       );
+    }
+    if (!isNaN(parseFloat(config.setpoint.default))) {
+      setpointDefault = parseFloat(config.setpoint.default);
+    } else {
+      throw new Error(
+        "{}:[Problem with setpoint: bad default value ({})]"
+      ).format(config.devName, parseFloat(config.setpoint.default));
     }
   }
 
   if (setpointMin >= setpointMax) {
     throw new Error("Maximal setpoint value must be greater than minimal");
   }
-
+  if (setpointDefault > setpointMax || setpointDefault < setpointMin) {
+    throw new Error(
+      "Default setpoint value must be greater than minimal and smaller than maximal"
+    );
+  }
 
   if (config.debug)
     log.debug(
-      "[New thermal control device:\
+      "New thermal control device:\
+    \n{\
     \nName: {}\
     \nTitle: {},\
     \nTemperature source: {}\
     \nHeating switch control: {}\
     \nCooling switch control: {}\
     \nModes: {}\
-    \nSetpoint range: [min : {}, max : {}]\
-    \nHysteresis: {}.]".format(
+    \nSetpoint: [min : {}, max : {}, default : {}]\
+    \nHysteresis: {}\
+    \n}".format(
         devName,
         config.devTitle,
         config.temperatureSource,
@@ -198,12 +211,16 @@ exports.ThermalControlDevice = function (config) {
         JSON.stringify(config.modes, null, 0),
         setpointMin,
         setpointMax,
+        setpointDefault,
         hysteresis
       )
     );
 
-  this._device = _defineThermalControlDevice(config, setpointMin, setpointMax);
-  var persist = new PersistentStorage("thermalcontrol", {global: true});
+  this._device = _defineThermalControlDevice(config, setpointDefault);
+  dev[devName]["hysteresis"] = hysteresis;
+  if (isNaN(parseFloat(dev[devName]["setpoint"]))){
+    dev[devName]["setpoint"] = setpointDefault;
+  }
 
   this._regulationRule = defineRule({
     whenChanged: devName + "/temperature",
@@ -275,7 +292,6 @@ exports.ThermalControlDevice = function (config) {
     whenChanged: devName + "/setpoint",
     then: function () {
       setpoint = dev[devName]["setpoint"];
-      persist[devName+"_setpoint"] = setpoint;
       if (setpoint > setpointMax) {
         dev[devName]["setpoint"] = setpointMax;
         log.error(
@@ -302,12 +318,5 @@ exports.ThermalControlDevice = function (config) {
     }.bind(this),
   });
 
-  dev[devName]["hysteresis"] = hysteresis;
   runRule(this._setpointControl);
-
-  if (!isNaN(persist[devName+"_setpoint"])){
-    (dev[devName]["setpoint"] = persist[devName+"_setpoint"]);
-  } else {
-    persist[devName+"_setpoint"] = dev[devName]["setpoint"];
-  }
 };
