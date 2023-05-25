@@ -62,7 +62,7 @@ function _defineThermalControlDevice(config, setpointMin, setpointMax) {
         title: "State",
         type: "text",
         readonly: true,
-        value: "OFF",
+        value: "DISABLED",
         order: 40,
       },
       hysteresis: {
@@ -238,7 +238,7 @@ exports.ThermalControlDevice = function (config) {
         } else if (cool) {
           dev[devName]["devState"] = "COOLING";
         } else {
-          dev[devName]["devState"] = "OFF";
+          dev[devName]["devState"] = "DISABLED";
         }
       }
     }.bind(this),
