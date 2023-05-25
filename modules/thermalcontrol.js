@@ -255,7 +255,7 @@ exports.ThermalControlDevice = function (config) {
     whenChanged: devName + "/devEnabled",
     then: function (value) {
       if (value) {
-        dev[devName]["devState"] = "OFF";
+        dev[devName]["devState"] = "DISABLED";
         if (config.debug)
           log.debug("{}:[Thermostat ENABLED now]".format(devName));
         enableRule(this._regulationRule);
