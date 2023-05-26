@@ -45,6 +45,7 @@ function _defineThermalControlDevice(config, setpointDefault) {
       temperature: {
         title: "Temperature",
         type: "value",
+        units: "°C",
         readonly: true,
         value: 0,
         order: 20,
@@ -52,6 +53,7 @@ function _defineThermalControlDevice(config, setpointDefault) {
       setpoint: {
         title: "Setpoint",
         type: "value",
+        units: "°C",
         readonly: false,
         value: setpointDefault,
         order: 30,
@@ -66,6 +68,7 @@ function _defineThermalControlDevice(config, setpointDefault) {
       hysteresis: {
         title: "Hysteresis",
         type: "value",
+        units: "°C",
         readonly: true,
         value: 0,
         order: 90,
@@ -80,10 +83,10 @@ function _defineThermalControlDevice(config, setpointDefault) {
  * @constructor
  *
  * @param {Object} config - Configurtaion of this countdown switch.
- * @param {string} [config.devName] - Name for a virtual device (should be valid MQTT subtopic).
+ * @param {string} config.devName - Name for a virtual device (should be valid MQTT subtopic).
  * @param {string} [config.devTitle] - Title for the timer's virtual device (any Unicode string).
  * @param {string[]} [config.modes] - List of allowed modes. May be "heating" and "cooling".
- * @param {string} [config.temperatureSource] - Source of temperature, must be valid MQTT subtopic.
+ * @param {string} config.temperatureSource - Source of temperature, must be valid MQTT subtopic.
  * @param {string} [config.heatingChannel] - Source of switch of real heating device, must be valid MQTT subtopic.
  * @param {string} [config.coolingChannel] - Source of switch of real cooling device, must be valid MQTT subtopic.
  * @param {Object} [config.setpoint] - Range and default value of thermal setpoint.
@@ -106,7 +109,7 @@ function _defineThermalControlDevice(config, setpointDefault) {
  *         "default": 23
  *     },
  *     hysteresis: 1,
- *     degug: true
+ *     debug: false
  * });
  *
  *
@@ -155,43 +158,61 @@ exports.ThermalControlDevice = function (config) {
   var setpointMax = 35.0;
   var setpointDefault = 23.0;
 
+  log.error(JSON.stringify(config.setpoint))
   if (config.hasOwnProperty("setpoint")) {
+    if (!("min" in config.setpoint)){
+      throw new Error("{}:[Problem with setpoint: min value not defined]".format(
+        config.devName));
+    }
+    if (!("max" in config.setpoint)){
+      throw new Error("{}:[Problem with setpoint: mix value not defined]".format(
+        config.devName));
+    }
+    if (!("default" in config.setpoint)){
+      throw new Error("{}:[Problem with setpoint: default value not defined]".format(
+        config.devName));
+    }
+
     if (!isNaN(parseFloat(config.setpoint.min))) {
       setpointMin = parseFloat(config.setpoint.min);
     } else {
-      throw new Error("{}:[Problem with setpoint: bad min value ({})]").format(
+      throw new Error("{}:[Problem with setpoint: bad min value ({})]".format(
         config.devName,
         parseFloat(config.setpoint.min)
-      );
+      ));
     }
     if (!isNaN(parseFloat(config.setpoint.max))) {
       setpointMax = parseFloat(config.setpoint.max);
     } else {
-      throw new Error("{}:[Problem with setpoint: bad max value ({})]").format(
+      throw new Error("{}:[Problem with setpoint: bad max value ({})]".format(
         config.devName,
         parseFloat(config.setpoint.max)
-      );
+      ));
     }
     if (!isNaN(parseFloat(config.setpoint.default))) {
       setpointDefault = parseFloat(config.setpoint.default);
     } else {
       throw new Error(
         "{}:[Problem with setpoint: bad default value ({})]"
-      ).format(config.devName, parseFloat(config.setpoint.default));
+      .format(config.devName, parseFloat(config.setpoint.default)));
     }
   }
 
-  if (setpointMin >= setpointMax) {
-    throw new Error("Maximal setpoint value must be greater than minimal");
-  }
+  if (config.debug)
+    if (setpointMin >= setpointMax) {
+      throw new Error("Maximal setpoint value must be greater than minimal");
+    }
   if (setpointDefault > setpointMax || setpointDefault < setpointMin) {
     throw new Error(
-      "Default setpoint value must be greater than minimal and smaller than maximal"
+      "Default setpoint ({}) value must be greater than minimal ({}) and smaller than maximal ({})".format(
+      setpointDefault,
+      setpointMax,
+      setpointMin)
     );
   }
 
   if (config.debug)
-    log.debug(
+    log.info(
       "New thermal control device:\
     \n{\
     \nName: {}\
@@ -218,7 +239,7 @@ exports.ThermalControlDevice = function (config) {
 
   this._device = _defineThermalControlDevice(config, setpointDefault);
   dev[devName]["hysteresis"] = hysteresis;
-  if (isNaN(parseFloat(dev[devName]["setpoint"]))){
+  if (isNaN(parseFloat(dev[devName]["setpoint"]))) {
     dev[devName]["setpoint"] = setpointDefault;
   }
 
@@ -255,7 +276,7 @@ exports.ThermalControlDevice = function (config) {
         } else if (cool) {
           dev[devName]["devState"] = "COOLING";
         } else {
-          dev[devName]["devState"] = "DISABLED";
+          dev[devName]["devState"] = "SUSPEND";
         }
       }
     }.bind(this),
@@ -272,9 +293,9 @@ exports.ThermalControlDevice = function (config) {
     whenChanged: devName + "/devEnabled",
     then: function (value) {
       if (value) {
-        dev[devName]["devState"] = "DISABLED";
+        dev[devName]["devState"] = "SUSPEND";
         if (config.debug)
-          log.debug("{}:[Thermostat ENABLED now]".format(devName));
+          log.info("{}:[Thermostat ENABLED now]".format(devName));
         enableRule(this._regulationRule);
         runRule(this._regulationRule);
       } else {
@@ -283,7 +304,7 @@ exports.ThermalControlDevice = function (config) {
         if (heatingChannelPresent) dev[heatingChannel] = false;
         if (coolingChannelPresent) dev[coolingChannel] = false;
         if (config.debug)
-          log.debug("{}:[Thermostat disabled now]".format(devName));
+          log.info("{}:[Thermostat disabled now]".format(devName));
       }
     }.bind(this),
   });
@@ -319,4 +340,5 @@ exports.ThermalControlDevice = function (config) {
   });
 
   runRule(this._setpointControl);
+  runRule(this._regulationRule);
 };
