@@ -127,6 +127,15 @@ exports.ThermalControlDevice = function (config) {
         format(config.devName)
       )
     );
+  } else {
+    if (getControl(config.temperatureSource) == undefined) {
+      throw new Error(
+        "{}:[Problem with temperature source channel: topic [{}] does not exist]".format(
+          config.devName,
+          config.temperatureSource
+        )
+      );
+    }
   }
   devName = config.devName;
 
@@ -138,14 +147,27 @@ exports.ThermalControlDevice = function (config) {
   heatingChannel = "";
   heatingChannelPresent = false;
   if (config.hasOwnProperty("heatingChannel")) {
-    heatingChannel = config.heatingChannel;
-    heatingChannelPresent = true;
+    if (getControl(config.heatingChannel) == undefined) {
+      throw new Error(
+        "{}:[Problem with heating channel: topic [{}] does not exist]".format(
+          config.devName,
+          config.heatingChannel
+        )
+      );
+    } else heatingChannelPresent = true;
   }
+
   coolingChannel = "";
   coolingChannelPresent = false;
   if (config.hasOwnProperty("coolingChannel")) {
-    coolingChannel = config.coolingChannel;
-    coolingChannelPresent = true;
+    if (getControl(config.coolingChannel) == undefined) {
+      throw new Error(
+        "{}:[Problem with cooling channel: topic [{}] does not exist]".format(
+          config.devName,
+          config.coolingChannel
+        )
+      );
+    }
   }
 
   hysteresis = 1.0;
@@ -158,43 +180,58 @@ exports.ThermalControlDevice = function (config) {
   var setpointMax = 35.0;
   var setpointDefault = 23.0;
 
-  log.error(JSON.stringify(config.setpoint))
   if (config.hasOwnProperty("setpoint")) {
-    if (!("min" in config.setpoint)){
-      throw new Error("{}:[Problem with setpoint: min value not defined]".format(
-        config.devName));
+    if (!("min" in config.setpoint)) {
+      throw new Error(
+        "{}:[Problem with setpoint: min value not defined]".format(
+          config.devName
+        )
+      );
     }
-    if (!("max" in config.setpoint)){
-      throw new Error("{}:[Problem with setpoint: mix value not defined]".format(
-        config.devName));
+    if (!("max" in config.setpoint)) {
+      throw new Error(
+        "{}:[Problem with setpoint: mix value not defined]".format(
+          config.devName
+        )
+      );
     }
-    if (!("default" in config.setpoint)){
-      throw new Error("{}:[Problem with setpoint: default value not defined]".format(
-        config.devName));
+    if (!("default" in config.setpoint)) {
+      throw new Error(
+        "{}:[Problem with setpoint: default value not defined]".format(
+          config.devName
+        )
+      );
     }
 
     if (!isNaN(parseFloat(config.setpoint.min))) {
       setpointMin = parseFloat(config.setpoint.min);
     } else {
-      throw new Error("{}:[Problem with setpoint: bad min value ({})]".format(
-        config.devName,
-        parseFloat(config.setpoint.min)
-      ));
+      throw new Error(
+        "{}:[Problem with setpoint: bad min value ({})]".format(
+          config.devName,
+          parseFloat(config.setpoint.min)
+        )
+      );
     }
     if (!isNaN(parseFloat(config.setpoint.max))) {
       setpointMax = parseFloat(config.setpoint.max);
     } else {
-      throw new Error("{}:[Problem with setpoint: bad max value ({})]".format(
-        config.devName,
-        parseFloat(config.setpoint.max)
-      ));
+      throw new Error(
+        "{}:[Problem with setpoint: bad max value ({})]".format(
+          config.devName,
+          parseFloat(config.setpoint.max)
+        )
+      );
     }
     if (!isNaN(parseFloat(config.setpoint.default))) {
       setpointDefault = parseFloat(config.setpoint.default);
     } else {
       throw new Error(
-        "{}:[Problem with setpoint: bad default value ({})]"
-      .format(config.devName, parseFloat(config.setpoint.default)));
+        "{}:[Problem with setpoint: bad default value ({})]".format(
+          config.devName,
+          parseFloat(config.setpoint.default)
+        )
+      );
     }
   }
 
@@ -205,9 +242,10 @@ exports.ThermalControlDevice = function (config) {
   if (setpointDefault > setpointMax || setpointDefault < setpointMin) {
     throw new Error(
       "Default setpoint ({}) value must be greater than minimal ({}) and smaller than maximal ({})".format(
-      setpointDefault,
-      setpointMax,
-      setpointMin)
+        setpointDefault,
+        setpointMax,
+        setpointMin
+      )
     );
   }
 
