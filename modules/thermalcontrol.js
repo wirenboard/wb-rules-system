@@ -190,7 +190,7 @@ exports.ThermalControlDevice = function (config) {
     }
     if (!("max" in config.setpoint)) {
       throw new Error(
-        "{}:[Problem with setpoint: mix value not defined]".format(
+        "{}:[Problem with setpoint: max value not defined]".format(
           config.devName
         )
       );
