@@ -123,7 +123,7 @@ exports.ThermalControlDevice = function (config) {
   }
   if (!config.hasOwnProperty("temperatureSource")) {
     throw new Error(
-      "{}:[There are no temperature source in config!]".format(
+      "{}:[There isn't temperature source in config!]".format(
         format(config.devName)
       )
     );
