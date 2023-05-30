@@ -119,7 +119,7 @@ function _defineThermalControlDevice(config, setpointDefault) {
 
 exports.ThermalControlDevice = function (config) {
   if (!config.hasOwnProperty("devName")) {
-    throw new Error("There are no device ID in config!");
+    throw new Error("There isn't device ID in config!");
   }
   if (!config.hasOwnProperty("temperatureSource")) {
     throw new Error(
