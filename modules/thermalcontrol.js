@@ -45,7 +45,7 @@ function _defineThermalControlDevice(config, setpointDefault) {
       },
       setpoint: {
         title: "Setpoint",
-        type: "value",
+        type: "range",
         units: "°C",
         readonly: false,
         value: setpointDefault,
@@ -76,6 +76,9 @@ function _defineThermalControlDevice(config, setpointDefault) {
  * @param {string} [config.heatingChannel] - Source of switch of real heating device, must be valid MQTT subtopic.
  * @param {string} [config.coolingChannel] - Source of switch of real cooling device, must be valid MQTT subtopic.
  * @param {Object} [config.setpoint] - Range and default value of thermal setpoint.
+ * @param {float} config.setpoint.min - Minimal value of setpoint.
+ * @param {float} config.setpoint.max - Minimal value of setpoint.
+ * @param {float} config.setpoint.default - Default value of setpoint.
  * @param {float} [config.hysteresis] - Value of thermal hysteresis.
  * @param {boolean} [config.debug] - Allow logging.
  * @example
