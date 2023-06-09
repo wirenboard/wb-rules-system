@@ -16,7 +16,7 @@ function initOnce() {
 }
 
 function collectDataFromPowerSupply(name) {
-  runShellCommand("udevadm info --query=property /sys/class/power_supply/{}".format(name), {
+  runShellCommand('udevadm info --query=property /sys/class/power_supply/{}'.format(name), {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       var dataMap = {};
@@ -30,26 +30,26 @@ function collectDataFromPowerSupply(name) {
       });
       powerSuppliesData[name] = dataMap;
 
-      if (dataMap["TYPE"]) {
-        if (dataMap["PRESENT"] != "0") {
+      if (dataMap['TYPE']) {
+        if (dataMap['PRESENT'] != '0') {
           // do not overwrite if one power supply of this type is already found
-          if (!powerSupplyNamesByType.hasOwnProperty(dataMap["TYPE"])) {
-            powerSupplyNamesByType[dataMap["TYPE"]] = name;
+          if (!powerSupplyNamesByType.hasOwnProperty(dataMap['TYPE'])) {
+            powerSupplyNamesByType[dataMap['TYPE']] = name;
           }
           initOnce();
         } else {
-          if (powerSupplyNamesByType[dataMap["TYPE"]] == name) {
-            delete powerSupplyNamesByType[dataMap["TYPE"]];
+          if (powerSupplyNamesByType[dataMap['TYPE']] == name) {
+            delete powerSupplyNamesByType[dataMap['TYPE']];
           }
         }
       }
-    }
+    },
   });
-};
+}
 
 function collectData() {
   // iterate over power_supply instances
-  runShellCommand("ls -1 /sys/class/power_supply/", {
+  runShellCommand('ls -1 /sys/class/power_supply/', {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       var newPowerSupplyList = capturedOutput.split('\n');
@@ -71,33 +71,40 @@ function collectData() {
 
       Object.keys(powerSuppliesData).forEach(function (psName) {
         if (newPowerSupplyList.indexOf(psName) == -1) {
-          log.info("power supply {} is no longer present".format(psName));
+          log.info('power supply {} is no longer present'.format(psName));
           delete powerSuppliesData[psName];
         }
       });
-    }
+    },
   });
-};
+}
 
 function createControlOrSetValue(vdevObj, controlName, controlDesc, initialValue) {
   if (!vdevObj.isControlExists(controlName)) {
     var desc = Object(controlDesc);
     desc.value = initialValue;
     vdevObj.addControl(controlName, desc);
-  };
+  }
 
   vdevObj.getControl(controlName).setValue({ value: initialValue });
 }
 
-function updateControl(vdevObj, psData, psPropertyName, controlName, controlType, scale, precision) {
-  if (!psData.hasOwnProperty(psPropertyName))
-    return;
+function updateControl(
+  vdevObj,
+  psData,
+  psPropertyName,
+  controlName,
+  controlType,
+  scale,
+  precision
+) {
+  if (!psData.hasOwnProperty(psPropertyName)) return;
 
   var value = Number(psData[psPropertyName]) / scale;
   if (precision != null) {
-    value = Math.round((value) * Math.pow(10, precision)) / Math.pow(10, precision);
+    value = Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
   }
-  createControlOrSetValue(vdevObj, controlName, { "type": controlType }, value)
+  createControlOrSetValue(vdevObj, controlName, { type: controlType }, value);
 }
 
 function removeControlIfExists(vdevObj, controlName) {
@@ -108,15 +115,15 @@ function removeControlIfExists(vdevObj, controlName) {
 
 var chargingStateSetTime = null;
 defineRule({
-  whenChanged: "battery/Charging",
+  whenChanged: 'battery/Charging',
   then: function (newValue) {
-    log("changed {}".format(newValue));
-    var batName = powerSupplyNamesByType["Battery"];
+    log('changed {}'.format(newValue));
+    var batName = powerSupplyNamesByType['Battery'];
     var newState;
     if (newValue) {
-      newState = "Charging";
+      newState = 'Charging';
     } else {
-      newState = "Not charging";
+      newState = 'Not charging';
     }
     runShellCommand("echo '{}' > /sys/class/power_supply/{}/status".format(newState, batName), {
       exitCallback: function (exitCode, capturedOutput) {
@@ -124,65 +131,61 @@ defineRule({
           chargingStateSetTime = new Date();
         } else {
           // error writing new status, revert state
-          getControl("battery/Charging").setValue({ value: !newValue, notify: false });
+          getControl('battery/Charging').setValue({ value: !newValue, notify: false });
         }
-      }
+      },
     });
-  }
+  },
 });
 
 function updateChargingControl(vdevObj, psData) {
-  if (!psData.hasOwnProperty("STATUS"))
-    return;
+  if (!psData.hasOwnProperty('STATUS')) return;
 
-  if (chargingStateSetTime)
-    if ((new Date()) - chargingStateSetTime < 2500)
-      return;
+  if (chargingStateSetTime) if (new Date() - chargingStateSetTime < 2500) return;
 
   var charging = false;
-  if (psData["STATUS"] == "Charging")
-    charging = true;
+  if (psData['STATUS'] == 'Charging') charging = true;
 
-  createControlOrSetValue(vdevObj, "Charging", { "type": "switch" }, charging);
+  createControlOrSetValue(vdevObj, 'Charging', { type: 'switch' }, charging);
 }
 
 function createVdevOnce() {
   if (!vdev) {
     vdev = defineVirtualDevice('battery', {
-      title: "Battery",
-      cells: {}
+      title: 'Battery',
+      cells: {},
     });
   }
 }
 
 function publishData() {
-  var batName = powerSupplyNamesByType["Battery"];
+  var batName = powerSupplyNamesByType['Battery'];
   if (batName) {
     var batData = powerSuppliesData[batName];
     createVdevOnce();
-    updateControl(vdev, batData, "CAPACITY", "Percentage", "value", 1);
-    updateControl(vdev, batData, "CURRENT_NOW", "Current", "value", 1000000);
-    updateControl(vdev, batData, "VOLTAGE_NOW", "Voltage", "voltage", 1000000);
-    updateControl(vdev, batData, "POWER_NOW", "Power", "power", 1000000, 2);
+    updateControl(vdev, batData, 'CAPACITY', 'Percentage', 'value', 1);
+    updateControl(vdev, batData, 'CURRENT_NOW', 'Current', 'value', 1000000);
+    updateControl(vdev, batData, 'VOLTAGE_NOW', 'Voltage', 'voltage', 1000000);
+    updateControl(vdev, batData, 'POWER_NOW', 'Power', 'power', 1000000, 2);
 
     updateChargingControl(vdev, batData);
   } else {
-    removeControlIfExists(vdev, "Percentage");
-    removeControlIfExists(vdev, "Current");
-    removeControlIfExists(vdev, "Voltage");
-    removeControlIfExists(vdev, "Charging");
-    removeControlIfExists(vdev, "Power");
+    removeControlIfExists(vdev, 'Percentage');
+    removeControlIfExists(vdev, 'Current');
+    removeControlIfExists(vdev, 'Voltage');
+    removeControlIfExists(vdev, 'Charging');
+    removeControlIfExists(vdev, 'Power');
   }
 
-  var mainsName = powerSupplyNamesByType["Mains"];
+  var mainsName = powerSupplyNamesByType['Mains'];
   if (mainsName) {
     var mainsData = powerSuppliesData[mainsName];
-    if (mainsData.hasOwnProperty("ONLINE")) {
-      var mainsOnline = (mainsData["ONLINE"] == "1");
-      dev["power_status/working on battery"] = !mainsOnline;
+    if (mainsData.hasOwnProperty('ONLINE')) {
+      var mainsOnline = mainsData['ONLINE'] == '1';
+      dev['power_status/working on battery'] = !mainsOnline;
     }
   }
-};
+}
 
 function update() {
   collectData();
