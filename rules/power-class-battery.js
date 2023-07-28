@@ -113,6 +113,7 @@ function removeControlIfExists(vdevObj, controlName) {
   }
 }
 
+var chargingStateSetTime = null;
 function updateChargingControl(vdevObj, psData) {
   if (!psData.hasOwnProperty('STATUS')) return;
 
@@ -121,7 +122,7 @@ function updateChargingControl(vdevObj, psData) {
   var charging = false;
   if (psData['STATUS'] == 'Charging') charging = true;
 
-  createControlOrSetValue(vdevObj, 'Charging', { type: 'switch', readonly: 'true' }, charging);
+  createControlOrSetValue(vdevObj, 'Charging', { type: 'switch', readonly: true }, charging);
 }
 
 function createVdevOnce() {
