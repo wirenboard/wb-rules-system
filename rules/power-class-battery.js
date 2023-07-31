@@ -114,30 +114,6 @@ function removeControlIfExists(vdevObj, controlName) {
 }
 
 var chargingStateSetTime = null;
-defineRule({
-  whenChanged: 'battery/Charging',
-  then: function (newValue) {
-    log('changed {}'.format(newValue));
-    var batName = powerSupplyNamesByType['Battery'];
-    var newState;
-    if (newValue) {
-      newState = 'Charging';
-    } else {
-      newState = 'Not charging';
-    }
-    runShellCommand("echo '{}' > /sys/class/power_supply/{}/status".format(newState, batName), {
-      exitCallback: function (exitCode, capturedOutput) {
-        if (exitCode == 0) {
-          chargingStateSetTime = new Date();
-        } else {
-          // error writing new status, revert state
-          getControl('battery/Charging').setValue({ value: !newValue, notify: false });
-        }
-      },
-    });
-  },
-});
-
 function updateChargingControl(vdevObj, psData) {
   if (!psData.hasOwnProperty('STATUS')) return;
 
@@ -146,7 +122,7 @@ function updateChargingControl(vdevObj, psData) {
   var charging = false;
   if (psData['STATUS'] == 'Charging') charging = true;
 
-  createControlOrSetValue(vdevObj, 'Charging', { type: 'switch' }, charging);
+  createControlOrSetValue(vdevObj, 'Charging', { type: 'switch', readonly: true }, charging);
 }
 
 function createVdevOnce() {

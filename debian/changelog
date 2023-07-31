@@ -1,3 +1,9 @@
+wb-rules-system (1.9.6) stable; urgency=medium
+
+  * Remove battery charging manually switching
+
+ -- Ekaterina Volkova <ekaterina.volkova@wirenboard.ru>  Fri, 28 Jul 2023 10:36:13 +0300
+
 wb-rules-system (1.9.5) stable; urgency=medium
 
   * Format source code. No functional changes
