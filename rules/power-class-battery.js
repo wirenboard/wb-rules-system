@@ -94,6 +94,7 @@ function updateControl(
   psData,
   psPropertyName,
   controlName,
+  controlOrder,
   controlType,
   scale,
   precision
@@ -104,7 +105,7 @@ function updateControl(
   if (precision != null) {
     value = Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
   }
-  createControlOrSetValue(vdevObj, controlName, { type: controlType }, value);
+  createControlOrSetValue(vdevObj, controlName, { type: controlType, order: controlOrder}, value);
 }
 
 function removeControlIfExists(vdevObj, controlName) {
@@ -122,7 +123,7 @@ function updateChargingControl(vdevObj, psData) {
   var charging = false;
   if (psData['STATUS'] == 'Charging') charging = true;
 
-  createControlOrSetValue(vdevObj, 'Charging', { type: 'switch', readonly: true }, charging);
+  createControlOrSetValue(vdevObj, 'Charging', { type: 'switch', readonly: true, order: 5}, charging);
 }
 
 function createVdevOnce() {
@@ -139,10 +140,10 @@ function publishData() {
   if (batName) {
     var batData = powerSuppliesData[batName];
     createVdevOnce();
-    updateControl(vdev, batData, 'CAPACITY', 'Percentage', 'value', 1);
-    updateControl(vdev, batData, 'CURRENT_NOW', 'Current', 'value', 1000000);
-    updateControl(vdev, batData, 'VOLTAGE_NOW', 'Voltage', 'voltage', 1000000);
-    updateControl(vdev, batData, 'POWER_NOW', 'Power', 'power', 1000000, 2);
+    updateControl(vdev, batData, 'CAPACITY', 'Percentage', 1, 'value', 1);
+    updateControl(vdev, batData, 'CURRENT_NOW', 'Current', 2, 'value', 1000000);
+    updateControl(vdev, batData, 'VOLTAGE_NOW', 'Voltage', 3, 'voltage', 1000000);
+    updateControl(vdev, batData, 'POWER_NOW', 'Power', 4, 'power', 1000000, 2);
 
     updateChargingControl(vdev, batData);
   } else {
