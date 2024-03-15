@@ -42,18 +42,22 @@ function initDevice(resetButon) {
       value: 0,
     },
     Charge: {
+      title: { en: 'Charge', ru: 'Заряд' },
       type: 'value',
       value: 0,
     },
     Current: {
+      title: { en: 'Current', ru: 'Ток' },
       type: 'value',
       value: 0,
     },
     Voltage: {
+      title: { en: 'Voltage', ru: 'Напряжение' },
       type: 'voltage',
       value: 0,
     },
     Temperature: {
+      title: { en: 'Temperature', ru: 'Температура' },
       type: 'temperature',
       value: 0,
     },

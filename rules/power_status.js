@@ -3,6 +3,7 @@ defineVirtualDevice('power_status', {
 
   cells: {
     'working on battery': {
+      title: { en: 'Working on battery', ru: 'Работа от батареи' },
       type: 'switch',
       value: false,
       readonly: true,

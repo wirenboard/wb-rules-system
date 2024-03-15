@@ -1,3 +1,9 @@
+wb-rules-system (1.10.0) stable; urgency=medium
+
+  * Add titles translation
+
+ -- Nikolay Korotkiy <nikolay.korotkiy@wirenboard.com>  Fri, 15 Mar 2024 12:30:00 +0400
+
 wb-rules-system (1.9.7) stable; urgency=medium
 
   * Add order meta to battery device controls
