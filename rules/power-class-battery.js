@@ -105,7 +105,7 @@ function updateControl(
   if (precision != null) {
     value = Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
   }
-  createControlOrSetValue(vdevObj, controlName, { type: controlType, order: controlOrder}, value);
+  createControlOrSetValue(vdevObj, controlName, { type: controlType, order: controlOrder }, value);
 }
 
 function removeControlIfExists(vdevObj, controlName) {
@@ -123,7 +123,12 @@ function updateChargingControl(vdevObj, psData) {
   var charging = false;
   if (psData['STATUS'] == 'Charging') charging = true;
 
-  createControlOrSetValue(vdevObj, 'Charging', { type: 'switch', readonly: true, order: 5}, charging);
+  createControlOrSetValue(
+    vdevObj,
+    'Charging',
+    { type: 'switch', readonly: true, order: 5 },
+    charging
+  );
 }
 
 function createVdevOnce() {

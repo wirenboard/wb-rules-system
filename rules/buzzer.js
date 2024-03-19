@@ -4,16 +4,19 @@
 
     cells: {
       frequency: {
+        title: { en: 'Frequency', ru: 'Частота' },
         type: 'range',
         value: 3000,
         max: 7000,
       },
       volume: {
+        title: { en: 'Volume', ru: 'Громкость' },
         type: 'range',
         value: 10,
         max: 100,
       },
       enabled: {
+        title: { en: 'Enabled', ru: 'Включен' },
         type: 'switch',
         value: false,
       },

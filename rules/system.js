@@ -1,25 +1,31 @@
 var systemCells = {
   'Current uptime': {
+    title: { en: 'Current uptime', ru: 'Время работы' },
     type: 'text',
     value: '0',
   },
   'Short SN': {
+    title: { en: 'Short SN', ru: 'Серийный номер' },
     type: 'text',
     value: '',
   },
   'DTS Version': {
+    title: { en: 'DTS Version', ru: 'Версия DTS' },
     type: 'text',
     value: '',
   },
   'Release suite': {
+    title: { en: 'Release suite', ru: 'Тип релиза' },
     type: 'text',
     value: '',
   },
   'Release name': {
+    title: { en: 'Release name', ru: 'Название релиза' },
     type: 'text',
     value: '',
   },
   Reboot: {
+    title: { en: 'Reboot', ru: 'Перезагрузить' },
     type: 'pushbutton',
   },
 };
@@ -67,10 +73,26 @@ function getReleaseInfoProperty(property, cell) {
 
 function initSystemDevice(hasWirenboardNode) {
   if (hasWirenboardNode) {
-    systemCells['HW Revision'] = { type: 'text', value: '' };
-    systemCells['Batch No'] = { type: 'text', value: '' };
-    systemCells['Manufacturing Date'] = { type: 'text', value: '' };
-    systemCells['Temperature Grade'] = { type: 'text', value: '' };
+    systemCells['HW Revision'] = {
+      title: { en: 'HW Revision', ru: 'Версия контроллера' },
+      type: 'text',
+      value: '',
+    };
+    systemCells['Batch No'] = {
+      title: { en: 'Batch No', ru: 'Номер партии' },
+      type: 'text',
+      value: '',
+    };
+    systemCells['Manufacturing Date'] = {
+      title: { en: 'Manufacturing Date', ru: 'Дата производства' },
+      type: 'text',
+      value: '',
+    };
+    systemCells['Temperature Grade'] = {
+      title: { en: 'Temperature Grade', ru: 'Температурный диапазон' },
+      type: 'text',
+      value: '',
+    };
   }
 
   defineVirtualDevice('system', {

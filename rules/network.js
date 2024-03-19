@@ -7,10 +7,12 @@ defineVirtualDevice('network', {
   title: 'Network',
   cells: {
     'Active Connections': {
+      title: { en: 'Active Connections', ru: 'Активные соединения' },
       type: 'text',
       value: '',
     },
     'Default Interface': {
+      title: { en: 'Default Interface', ru: 'Интерфейс по умолчанию' },
       type: 'text',
       value: '',
     },
@@ -35,30 +37,36 @@ defineVirtualDevice('network', {
       value: '',
     },
     'Ethernet IP Online Status': {
+      title: { en: 'Ethernet IP Online Status', ru: 'Ethernet IP статус' },
       type: 'switch',
       value: false,
       readonly: true,
     },
     'Ethernet 2 IP Online Status': {
+      title: { en: 'Ethernet 2 IP Online Status', ru: 'Ethernet 2 IP статус' },
       type: 'switch',
       value: false,
       readonly: true,
     },
     'Internet Connection': {
+      title: { en: 'Internet Connection', ru: 'Интернет соединение' },
       type: 'text',
       value: '',
     },
     'Wi-Fi IP Online Status': {
+      title: { en: 'Wi-Fi IP Online Status', ru: 'Wi-Fi IP статус' },
       type: 'switch',
       value: false,
       readonly: true,
     },
     'Wi-Fi 2 IP Online Status': {
+      title: { en: 'Wi-Fi 2 IP Online Status', ru: 'Wi-Fi 2 IP статус' },
       type: 'switch',
       value: false,
       readonly: true,
     },
     'GPRS IP Online Status': {
+      title: { en: 'GPRS IP Online Status', ru: 'GPRS IP статус' },
       type: 'switch',
       value: false,
       readonly: true,
