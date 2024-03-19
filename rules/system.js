@@ -76,22 +76,22 @@ function initSystemDevice(hasWirenboardNode) {
     systemCells['HW Revision'] = {
       title: { en: 'HW Revision', ru: 'Версия контроллера' },
       type: 'text',
-      value: ''
+      value: '',
     };
     systemCells['Batch No'] = {
       title: { en: 'Batch No', ru: 'Номер партии' },
       type: 'text',
-      value: ''
+      value: '',
     };
     systemCells['Manufacturing Date'] = {
       title: { en: 'Manufacturing Date', ru: 'Дата производства' },
       type: 'text',
-      value: ''
+      value: '',
     };
     systemCells['Temperature Grade'] = {
       title: { en: 'Temperature Grade', ru: 'Температурный диапазон' },
       type: 'text',
-      value: ''
+      value: '',
     };
   }
 
