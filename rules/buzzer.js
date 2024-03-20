@@ -1,6 +1,6 @@
 (function () {
   defineVirtualDevice('buzzer', {
-    title: 'Buzzer',
+    title: { en: 'Buzzer', ru: 'Зуммер' },
 
     cells: {
       frequency: {

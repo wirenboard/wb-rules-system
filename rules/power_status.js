@@ -1,5 +1,5 @@
 defineVirtualDevice('power_status', {
-  title: 'Power status', //
+  title: { en: 'Power status', ru: 'Статус питания' },
 
   cells: {
     'working on battery': {
@@ -9,6 +9,7 @@ defineVirtualDevice('power_status', {
       readonly: true,
     },
     Vin: {
+      title: { en: 'Input voltage', ru: 'Входное напряжение' },
       type: 'voltage',
       value: 0,
     },

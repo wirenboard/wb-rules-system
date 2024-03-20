@@ -42,7 +42,7 @@ runShellCommand(
 
       if (Object.keys(cells).length != 0) {
         defineVirtualDevice('hwmon', {
-          title: 'HW Monitor',
+          title: { en: 'HW Monitor', ru: 'HW монитор' },
           cells: cells,
         });
 

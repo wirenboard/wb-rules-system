@@ -96,7 +96,7 @@ function initSystemDevice(hasWirenboardNode) {
   }
 
   defineVirtualDevice('system', {
-    title: 'System',
+    title: { en: 'System', ru: 'Система' },
     cells: systemCells,
   });
 

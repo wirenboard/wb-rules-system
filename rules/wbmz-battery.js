@@ -68,7 +68,7 @@ function initDevice(resetButon) {
     };
   }
   defineVirtualDevice('battery', {
-    title: 'Battery',
+    title: { en: 'Battery', ru: 'Батарея' },
     cells: cells,
   });
 

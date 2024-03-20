@@ -134,7 +134,7 @@ function updateChargingControl(vdevObj, psData) {
 function createVdevOnce() {
   if (!vdev) {
     vdev = defineVirtualDevice('battery', {
-      title: 'Battery',
+      title: { en: 'Battery', ru: 'Батарея' },
       cells: {},
     });
   }
