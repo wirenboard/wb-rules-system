@@ -4,7 +4,7 @@ defineVirtualDevice('network', {
   /*
   While editing cell names, mind compatibility with existing homeui dashboards!
   */
-  title: 'Network',
+  title: { en: 'Network', ru: 'Сеть' },
   cells: {
     'Active Connections': {
       title: { en: 'Active Connections', ru: 'Активные соединения' },

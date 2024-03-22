@@ -34,3 +34,5 @@ wb-configs_*.*
 
 .tern-port
 debian/wb-rules-system
+
+node_modules/
