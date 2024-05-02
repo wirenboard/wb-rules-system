@@ -25,9 +25,11 @@
 			var period = parseInt(1.0 / dev.buzzer.frequency * 1e9);
 			var duty_cycle = parseInt(dev.buzzer.volume * 1.0 / 100 * period * 0.5);
 
-			runShellCommand('echo {} > {}/pwm{}/period'.format(period, pwm_sys, pwm_number));
-			runShellCommand('echo {} > {}/pwm{}/duty_cycle'.format(duty_cycle, pwm_sys, pwm_number));
-			runShellCommand('echo {} > {}/pwm{}/enable'.format(dev.buzzer.enabled & 1, pwm_sys, pwm_number));
+			runShellCommand([
+				'echo {} > {}/pwm{}/period'.format(period, pwm_sys, pwm_number),
+				'echo {} > {}/pwm{}/duty_cycle'.format(duty_cycle, pwm_sys, pwm_number).
+				'echo {} > {}/pwm{}/enable'.format(dev.buzzer.enabled & 1, pwm_sys, pwm_number
+			]);
 		}
 	});
 })();

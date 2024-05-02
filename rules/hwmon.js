@@ -23,9 +23,7 @@ runShellCommand('set /proc/device-tree/wirenboard/hwmon-nodes/*/*; [ -e "$1" ] |
 				var nodeName = match[1];
 				var propName = match[2];
 
-				if (!nodeInfo[nodeName]) {
-					nodeInfo[nodeName] = {};
-				}
+				if (!nodeInfo[nodeName]) nodeInfo[nodeName] = {};
 
 				nodeInfo[nodeName][propName] = contents;
 			}
@@ -35,8 +33,8 @@ runShellCommand('set /proc/device-tree/wirenboard/hwmon-nodes/*/*; [ -e "$1" ] |
 
 		for (var nodeName in nodeInfo) {
 			if (nodeInfo.hasOwnProperty(nodeName)) {
-				var node = nodeInfo[nodeName];
-				controls[node['title']] = {type: 'temperature', value: 0.0};
+				var node = nodeInfo[nodeName]['title'];
+				controls[node] = {type: 'temperature', value: 0.0};
 			}
 		}
 
@@ -66,10 +64,9 @@ function initHwmonSysfs() {
 
 				if (strParts.length == 2) {
 					var path = strParts[0];
-					var sysfsDirPath = path.match(/^(\/sys\/class\/hwmon\/hwmon[^\/]+)\//)[1];
-					var nodeName = strParts[1];
+					var node = strParts[1];
 
-					sysfsMapping[nodeName] = sysfsDirPath;
+					sysfsMapping[node] = path.match(/^(\/sys\/class\/hwmon\/hwmon[^\/]+)\//)[1];
 				}
 			}
 
@@ -92,7 +89,6 @@ function initReadRules() {
 	for (var nodeName in nodeInfo) {
 		if (nodeInfo.hasOwnProperty(nodeName)) {
 			var node = nodeInfo[nodeName];
-
 			var sysfsDirPath = sysfsMapping[node['hwmon-node-name']];
 
 			if (sysfsDirPath) {
