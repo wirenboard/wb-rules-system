@@ -1,33 +1,42 @@
-var updateIntervalMs = 1000; //Интервал обновления данных (мс)
-
-var vdev = null;
+var device = null;
+var inited = false;
 
 var powerSuppliesData = {};
 var powerSupplyNamesByType = {};
 
-var initialized = false;
-function initOnce() {
-  if (initialized) {
-    return;
+var updateIntervalMs = 1000; // интервал обновления данных (мс)
+var chargingStateSetTime = null; // метка времени
+
+function createControlOrSetValue(name, desc, initial) {
+  if (!device.isControlExists(name)) {
+    var options = Object(desc);
+
+    options.value = initial;
+    device.addControl(name, options);
   }
 
-  setInterval(update, updateIntervalMs);
-  initialized = true;
+  device.getControl(name).setValue({value: initial});
 }
 
 function collectDataFromPowerSupply(name) {
+  if (!name) return;
+
   runShellCommand('udevadm info --query=property /sys/class/power_supply/{}'.format(name), {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       var dataMap = {};
+
       capturedOutput.split('\n').forEach(function (line) {
         var parsed = line.match(/^POWER_SUPPLY_(.*)=(.*)$/);
+
         if (parsed) {
           var param = parsed[1];
           var value = parsed[2];
+
           dataMap[param] = value;
         }
       });
+
       powerSuppliesData[name] = dataMap;
 
       if (dataMap['TYPE']) {
@@ -36,14 +45,16 @@ function collectDataFromPowerSupply(name) {
           if (!powerSupplyNamesByType.hasOwnProperty(dataMap['TYPE'])) {
             powerSupplyNamesByType[dataMap['TYPE']] = name;
           }
-          initOnce();
-        } else {
-          if (powerSupplyNamesByType[dataMap['TYPE']] == name) {
-            delete powerSupplyNamesByType[dataMap['TYPE']];
+
+          if (!inited) {
+            setInterval(update, updateIntervalMs);
+            inited = true;
           }
+        } else if (powerSupplyNamesByType[dataMap['TYPE']] == name) {
+          delete powerSupplyNamesByType[dataMap['TYPE']];
         }
       }
-    },
+    }
   });
 }
 
@@ -56,14 +67,13 @@ function collectData() {
 
       // query and update information for present power supplies
       newPowerSupplyList.forEach(function (line) {
-        if (line) {
-          collectDataFromPowerSupply(line);
-        }
+        collectDataFromPowerSupply(line);
       });
 
       // remove power supplies which are no longer present
       Object.keys(powerSupplyNamesByType).forEach(function (psType) {
         psName = powerSupplyNamesByType[psType];
+  
         if (newPowerSupplyList.indexOf(psName) == -1) {
           delete powerSupplyNamesByType[psType];
         }
@@ -71,100 +81,73 @@ function collectData() {
 
       Object.keys(powerSuppliesData).forEach(function (psName) {
         if (newPowerSupplyList.indexOf(psName) == -1) {
-          log.info('power supply {} is no longer present'.format(psName));
           delete powerSuppliesData[psName];
+          log.info('power supply {} is no longer present'.format(psName));
         }
       });
-    },
+    }
   });
 }
 
-function createControlOrSetValue(vdevObj, controlName, controlDesc, initialValue) {
-  if (!vdevObj.isControlExists(controlName)) {
-    var desc = Object(controlDesc);
-    desc.value = initialValue;
-    vdevObj.addControl(controlName, desc);
-  }
-
-  vdevObj.getControl(controlName).setValue({ value: initialValue });
-}
-
-function updateControl(
-  vdevObj,
-  psData,
-  psPropertyName,
-  controlName,
-  controlOrder,
-  controlType,
-  scale,
-  precision
-) {
-  if (!psData.hasOwnProperty(psPropertyName)) return;
-
-  var value = Number(psData[psPropertyName]) / scale;
-  if (precision != null) {
-    value = Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
-  }
-  createControlOrSetValue(vdevObj, controlName, { type: controlType, order: controlOrder }, value);
-}
-
-function removeControlIfExists(vdevObj, controlName) {
-  if (vdevObj && vdevObj.isControlExists(controlName)) {
-    vdevObj.removeControl(controlName);
-  }
-}
-
-var chargingStateSetTime = null;
-function updateChargingControl(vdevObj, psData) {
-  if (!psData.hasOwnProperty('STATUS')) return;
-
-  if (chargingStateSetTime) if (new Date() - chargingStateSetTime < 2500) return;
-
-  var charging = false;
-  if (psData['STATUS'] == 'Charging') charging = true;
-
-  createControlOrSetValue(
-    vdevObj,
-    'Charging',
-    { type: 'switch', readonly: true, order: 5 },
-    charging
-  );
-}
-
-function createVdevOnce() {
-  if (!vdev) {
-    vdev = defineVirtualDevice('battery', {
-      title: { en: 'Battery', ru: 'Батарея' },
-      cells: {},
-    });
-  }
-}
-
 function publishData() {
+  var controls = {
+    'CAPACITY': {name: 'Percentage', en: 'Charge left', ru: 'Остаток', type: 'value', scale: 1, order: 1},
+    'CURRENT_NOW': {name: 'Current', en: 'Current', ru: 'Потребление', type: 'value', scale: 1000000, order: 2},
+    'VOLTAGE_NOW': {name: 'Voltage', en: 'Voltage', ru: 'Напряжение', scale: 1000000, order: 3},
+    'POWER_NOW': {name: 'Power', en: '-', ru: '-', type: 'power', scale: 1000000, precision: 2, order: 4},
+    'STATUS': {name: 'Charging', en: 'Charging', ru: 'Зарядка', type: 'switch', order: 5}
+  };
+
   var batName = powerSupplyNamesByType['Battery'];
+
   if (batName) {
     var batData = powerSuppliesData[batName];
-    createVdevOnce();
-    updateControl(vdev, batData, 'CAPACITY', 'Percentage', 1, 'value', 1);
-    updateControl(vdev, batData, 'CURRENT_NOW', 'Current', 2, 'value', 1000000);
-    updateControl(vdev, batData, 'VOLTAGE_NOW', 'Voltage', 3, 'voltage', 1000000);
-    updateControl(vdev, batData, 'POWER_NOW', 'Power', 4, 'power', 1000000, 2);
 
-    updateChargingControl(vdev, batData);
+    if (!device) device = defineVirtualDevice('battery', {
+      title: {en: 'Battery', ru: 'Батарея'},
+      cells: {},
+    });
+
+    // update values for all controls (or create them)
+    Object.keys(controls).forEach(function(key) {
+      if (!batData.hasOwnProperty(key)) return;
+
+      var item = controls[key];
+
+      if (key == 'STATUS') {
+        if (chargingStateSetTime && new Date() - chargingStateSetTime < 2500) return;
+  
+        var value = (batData[key] == 'Charging');
+
+        createControlOrSetValue(item.name, {title: {en: item.en, ru: item.ru}, type: item.type, order: item.order, readonly: true}, value);
+      } else {
+        var value = Number(batData[key]) / item.scale;
+
+        if (item.precision != null) {
+          value = Math.round(value * Math.pow(10, item.precision)) / Math.pow(10, item.precision);
+        }
+
+        createControlOrSetValue(item.name, {title: {en: item.en, ru: item.ru}, type: item.type, order: item.order}, value);
+      }
+    });
   } else {
-    removeControlIfExists(vdev, 'Percentage');
-    removeControlIfExists(vdev, 'Current');
-    removeControlIfExists(vdev, 'Voltage');
-    removeControlIfExists(vdev, 'Charging');
-    removeControlIfExists(vdev, 'Power');
+    // remove controls if they are exists
+    Object.keys(controls).forEach(function(key) {
+      var item = controls[key];
+
+      if (device && device.isControlExists(item.name)) {
+        device.removeControl(item.name);
+      }
+    });
   }
 
   var mainsName = powerSupplyNamesByType['Mains'];
+
   if (mainsName) {
     var mainsData = powerSuppliesData[mainsName];
+
     if (mainsData.hasOwnProperty('ONLINE')) {
-      var mainsOnline = mainsData['ONLINE'] == '1';
-      dev['power_status/working on battery'] = !mainsOnline;
+      dev.power_status['working on battery'] = (mainsData['ONLINE'] != '1');
     }
   }
 }
