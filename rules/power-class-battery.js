@@ -95,7 +95,9 @@ function updateControl(
   psPropertyName,
   controlName,
   controlOrder,
+  controlTitle,
   controlType,
+  controlUnits,
   scale,
   precision
 ) {
@@ -105,7 +107,11 @@ function updateControl(
   if (precision != null) {
     value = Math.round(value * Math.pow(10, precision)) / Math.pow(10, precision);
   }
-  createControlOrSetValue(vdevObj, controlName, { type: controlType, order: controlOrder }, value);
+  var params = { type: controlType, order: controlOrder, title: controlTitle };
+  if (controlUnits) {
+    params.units = controlUnits;
+  }
+  createControlOrSetValue(vdevObj, controlName, params, value);
 }
 
 function removeControlIfExists(vdevObj, controlName) {
@@ -126,7 +132,7 @@ function updateChargingControl(vdevObj, psData) {
   createControlOrSetValue(
     vdevObj,
     'Charging',
-    { type: 'switch', readonly: true, order: 5 },
+    { type: 'switch', readonly: true, order: 5, title: {ru: 'Зарядка'} },
     charging
   );
 }
@@ -145,10 +151,10 @@ function publishData() {
   if (batName) {
     var batData = powerSuppliesData[batName];
     createVdevOnce();
-    updateControl(vdev, batData, 'CAPACITY', 'Percentage', 1, 'value', 1);
-    updateControl(vdev, batData, 'CURRENT_NOW', 'Current', 2, 'value', 1000000);
-    updateControl(vdev, batData, 'VOLTAGE_NOW', 'Voltage', 3, 'voltage', 1000000);
-    updateControl(vdev, batData, 'POWER_NOW', 'Power', 4, 'power', 1000000, 2);
+    updateControl(vdev, batData, 'CAPACITY', 'Percentage', 1, {ru: 'Уровень заряда'}, 'value', '%', 1);
+    updateControl(vdev, batData, 'CURRENT_NOW', 'Current', 2, {ru: 'Ток'}, 'value', 'A', 1000000);
+    updateControl(vdev, batData, 'VOLTAGE_NOW', 'Voltage', 3, {ru: 'Напряжение'}, 'voltage', null, 1000000);
+    updateControl(vdev, batData, 'POWER_NOW', 'Power', 4, {ru: 'Мощность'}, 'power', null, 1000000, 2);
 
     updateChargingControl(vdev, batData);
   } else {
