@@ -39,12 +39,19 @@
     },
   });
 
-  function _buzzer_set_params() {
+  function _buzzer_set_params(exitCallback) {
     var period = parseInt((1.0 / dev.buzzer.frequency) * 1e9);
     var duty_cycle = parseInt(((dev.buzzer.volume * 1.0) / 100) * period * 0.5);
 
-    runShellCommand('echo {} > {}/pwm{}/period'.format(period, pwm_sys, pwm_number));
-    runShellCommand('echo {} > {}/pwm{}/duty_cycle'.format(duty_cycle, pwm_sys, pwm_number));
+    if (!exitCallback) {
+        exitCallback = function () {};
+    }
+
+    runShellCommand('echo {} > {}/pwm{}/period ;'.format(period, pwm_sys, pwm_number) +
+                    'echo {} > {}/pwm{}/duty_cycle ;'.format(duty_cycle, pwm_sys, pwm_number) +
+                    'echo normal > {}/pwm{}/polarity'.format(pwm_sys, pwm_number), {
+        exitCallback: exitCallback
+    });
   }
 
   defineRule('_system_buzzer_params', {
@@ -60,12 +67,16 @@
   defineRule('_system_buzzer_onof', {
     whenChanged: 'buzzer/enabled',
     then: function (newValue, devName, cellName) {
-      if (dev.buzzer.enabled) {
-        _buzzer_set_params();
+      var enabler = function() {
+        runShellCommand(
+          'echo {} > {}/pwm{}/enable'.format(dev.buzzer.enabled ? 1 : 0, pwm_sys, pwm_number)
+        );
       }
-      runShellCommand(
-        'echo {} > {}/pwm{}/enable'.format(dev.buzzer.enabled ? 1 : 0, pwm_sys, pwm_number)
-      );
+      if (dev.buzzer.enabled) {
+        _buzzer_set_params(enabler);
+      } else {
+        enabler();
+      }
     },
   });
 })();

@@ -1,3 +1,9 @@
+wb-rules-system (1.11.2) stable; urgency=medium
+
+  * buzzer: fix PWM polarity on wb7 and wb8
+
+ -- Nikita Maslov <nikita.maslov@wirenboard.com>  Thu, 29 Aug 2024 17:52:09 +0500
+
 wb-rules-system (1.11.1) stable; urgency=medium
 
   * power-class-battery: add control title translations
