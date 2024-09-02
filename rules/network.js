@@ -10,66 +10,79 @@ defineVirtualDevice('network', {
       title: { en: 'Active Connections', ru: 'Активные соединения' },
       type: 'text',
       value: '',
+      order: 1,
     },
     'Default Interface': {
       title: { en: 'Default Interface', ru: 'Интерфейс по умолчанию' },
       type: 'text',
       value: '',
+      order: 2,
+    },
+    'Internet Connection': {
+      title: { en: 'Internet Connection', ru: 'Интернет соединение' },
+      type: 'text',
+      value: '',
+      order: 3,
     },
     'Ethernet IP': {
       type: 'text',
       value: '',
-    },
-    'Ethernet 2 IP': {
-      type: 'text',
-      value: '',
-    },
-    'Wi-Fi IP': {
-      type: 'text',
-      value: '',
-    },
-    'Wi-Fi 2 IP': {
-      type: 'text',
-      value: '',
-    },
-    'GPRS IP': {
-      type: 'text',
-      value: '',
+      order: 4,
     },
     'Ethernet IP Online Status': {
       title: { en: 'Ethernet IP Online Status', ru: 'Ethernet IP статус' },
       type: 'switch',
       value: false,
       readonly: true,
+      order: 5,
+    },
+    'Ethernet 2 IP': {
+      type: 'text',
+      value: '',
+      order: 6,
     },
     'Ethernet 2 IP Online Status': {
       title: { en: 'Ethernet 2 IP Online Status', ru: 'Ethernet 2 IP статус' },
       type: 'switch',
       value: false,
       readonly: true,
+      order: 7,
     },
-    'Internet Connection': {
-      title: { en: 'Internet Connection', ru: 'Интернет соединение' },
+    'Wi-Fi IP': {
       type: 'text',
       value: '',
+      order: 8,
     },
     'Wi-Fi IP Online Status': {
       title: { en: 'Wi-Fi IP Online Status', ru: 'Wi-Fi IP статус' },
       type: 'switch',
       value: false,
       readonly: true,
+      order: 9,
+    },
+    'Wi-Fi 2 IP': {
+      type: 'text',
+      value: '',
+      order: 10,
     },
     'Wi-Fi 2 IP Online Status': {
       title: { en: 'Wi-Fi 2 IP Online Status', ru: 'Wi-Fi 2 IP статус' },
       type: 'switch',
       value: false,
       readonly: true,
+      order: 11,
+    },
+    'GPRS IP': {
+      type: 'text',
+      value: '',
+      order: 12,
     },
     'GPRS IP Online Status': {
       title: { en: 'GPRS IP Online Status', ru: 'GPRS IP статус' },
       type: 'switch',
       value: false,
       readonly: true,
+      order: 13,
     },
   },
 });
