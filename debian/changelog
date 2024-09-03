@@ -1,3 +1,9 @@
+wb-rules-system (1.11.3) stable; urgency=medium
+
+  * buzzer: fix PWM polarity on wb7 and wb8
+
+ -- Nikita Maslov <nikita.maslov@wirenboard.com>  Tue, 03 Sep 2024 10:49:52 +0500
+
 wb-rules-system (1.11.2) stable; urgency=medium
 
   * network: fix order
