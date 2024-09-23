@@ -10,7 +10,7 @@ function publishFitFileInfo(filePath, presentTopic, compatibilityTopic) {
         captureOutput: true,
         exitCallback: function (exitCode, capturedOutput) {
           if (exitCode != 0) return;
-          publish(compatibilityTopic, capturedOutput, 0, true);
+          publish(compatibilityTopic, capturedOutput.trim(), 0, true);
         }
       });
     }
