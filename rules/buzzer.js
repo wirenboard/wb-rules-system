@@ -40,7 +40,7 @@
   });
 
   function _buzzer_set_params(exitCallback) {
-    var period = parseInt((1.0 / dev.buzzer.frequency) * 1e9);
+    var period = parseInt((1.0 / dev.buzzer.frequency) * 1e9) || 0;
     var duty_cycle = parseInt(((dev.buzzer.volume * 1.0) / 100) * period * 0.5);
 
     if (!exitCallback) {
