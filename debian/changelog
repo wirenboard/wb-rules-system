@@ -1,4 +1,4 @@
-wb-rules-system (1.11.4) stable; urgency=medium
+wb-rules-system (1.12.0) stable; urgency=medium
 
   * Add Connection Enabled control for network connections
 
