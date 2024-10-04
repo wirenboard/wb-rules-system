@@ -25,64 +25,102 @@ defineVirtualDevice('network', {
       order: 3,
     },
     'Ethernet IP': {
+      title: { en: 'Ethernet 1 IP', ru: 'Ethernet 1 IP' },
       type: 'text',
       value: '',
       order: 4,
     },
     'Ethernet IP Online Status': {
-      title: { en: 'Ethernet IP Online Status', ru: 'Ethernet IP статус' },
+      title: { en: 'Ethernet 1 Internet Access', ru: 'Ethernet 1 Доступ к интернету' },
       type: 'switch',
       value: false,
       readonly: true,
       order: 5,
     },
-    'Ethernet 2 IP': {
-      type: 'text',
-      value: '',
-      order: 6,
-    },
-    'Ethernet 2 IP Online Status': {
-      title: { en: 'Ethernet 2 IP Online Status', ru: 'Ethernet 2 IP статус' },
+    'Ethernet IP Connection Enabled': {
+      title: { en: 'Ethernet 1 Enabled', ru: 'Ethernet 1 Включен' },
       type: 'switch',
       value: false,
       readonly: true,
-      order: 7,
+      order: 6,
     },
-    'Wi-Fi IP': {
+    'Ethernet 2 IP': {
       type: 'text',
       value: '',
+      order: 7,
+    },
+    'Ethernet 2 IP Online Status': {
+      title: { en: 'Ethernet 2 Internet Access', ru: 'Ethernet 2 Доступ к интернету' },
+      type: 'switch',
+      value: false,
+      readonly: true,
       order: 8,
     },
-    'Wi-Fi IP Online Status': {
-      title: { en: 'Wi-Fi IP Online Status', ru: 'Wi-Fi IP статус' },
+    'Ethernet 2 IP Connection Enabled': {
+      title: { en: 'Ethernet 2 Enabled', ru: 'Ethernet 2 Включен' },
       type: 'switch',
       value: false,
       readonly: true,
       order: 9,
     },
-    'Wi-Fi 2 IP': {
+    'Wi-Fi IP': {
+      title: { en: 'Wi-Fi 1 IP', ru: 'Wi-Fi 1 IP' },
       type: 'text',
       value: '',
       order: 10,
     },
-    'Wi-Fi 2 IP Online Status': {
-      title: { en: 'Wi-Fi 2 IP Online Status', ru: 'Wi-Fi 2 IP статус' },
+    'Wi-Fi IP Online Status': {
+      title: { en: 'Wi-Fi 1 Internet Access', ru: 'Wi-Fi 1 Доступ к интернету' },
       type: 'switch',
       value: false,
       readonly: true,
       order: 11,
     },
-    'GPRS IP': {
-      type: 'text',
-      value: '',
-      order: 12,
-    },
-    'GPRS IP Online Status': {
-      title: { en: 'GPRS IP Online Status', ru: 'GPRS IP статус' },
+    'Wi-Fi IP Connection Enabled': {
+      title: { en: 'Wi-Fi 1 Enabled', ru: 'Wi-Fi 1 Включен' },
       type: 'switch',
       value: false,
       readonly: true,
+      order: 12,
+    },
+    'Wi-Fi 2 IP': {
+      title: { en: 'Wi-Fi 2 IP', ru: 'Wi-Fi 2 IP' },
+      type: 'text',
+      value: '',
       order: 13,
+    },
+    'Wi-Fi 2 IP Online Status': {
+      title: { en: 'Wi-Fi 2 Internet Access', ru: 'Wi-Fi 2 Доступ к интернету' },
+      type: 'switch',
+      value: false,
+      readonly: true,
+      order: 14,
+    },
+    'Wi-Fi 2 IP Connection Enabled': {
+      title: { en: 'Wi-Fi 2 Enabled', ru: 'Wi-Fi 2 Включен' },
+      type: 'switch',
+      value: false,
+      readonly: true,
+      order: 15,
+    },
+    'GPRS IP': {
+      type: 'text',
+      value: '',
+      order: 16,
+    },
+    'GPRS IP Online Status': {
+      title: { en: 'GPRS IP Internet Access', ru: 'GPRS IP Доступ к интернету' },
+      type: 'switch',
+      value: false,
+      readonly: true,
+      order: 17,
+    },
+    'GPRS IP Connection Enabled': {
+      title: { en: 'GPRS IP Enabled', ru: 'GPRS IP Включен' },
+      type: 'switch',
+      value: false,
+      readonly: true,
+      order: 18,
     },
   },
 });
@@ -101,6 +139,12 @@ function _system_update_ip(name, iface) {
     captureOutput: false,
     exitCallback: function (exitCode) {
       dev.network[name + ' Online Status'] = exitCode === 0;
+    },
+  });
+  runShellCommand("ip link show {} 2>/dev/null | awk '{for (i=1; i<=NF; i++) if ($i == \"state\") print $(i+1)}'".format(iface), {
+    captureOutput: true,
+    exitCallback: function (exitCode, capturedOutput) {
+      dev.network[name + ' Connection Enabled'] = capturedOutput.trim() === "UP";
     },
   });
 }
