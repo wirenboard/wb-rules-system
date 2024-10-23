@@ -7,6 +7,16 @@ function _str_split_space(s) {
   }
 }
 
+function createControlOrSetValue(vdevObj, controlName, controlDesc, initialValue) {
+  if (!vdevObj.isControlExists(controlName)) {
+    var desc = Object(controlDesc);
+    desc.value = initialValue;
+    vdevObj.addControl(controlName, desc);
+  }
+
+  vdevObj.getControl(controlName).setValue({ value: initialValue });
+}
+
 var nodeInfo = {};
 
 runShellCommand(
@@ -93,12 +103,26 @@ function initHwmonSysfs() {
   );
 }
 
-function readChannel(path, controlName) {
-  runShellCommand('cat ' + path, {
+function readChannel(path, sysfsPath, controlName) {
+  var isOnlinePath = sysfsPath + '/device/online';
+  // not all hwmons support device/online => treating as online by default
+  runShellCommand('cat ' + isOnlinePath + ' 2>/dev/null || echo "1"', {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      if (exitCode == 0) {
-        dev['hwmon'][controlName] = parseFloat((parseInt(capturedOutput) * 0.001).toFixed(3));
+      var vdev = getDevice('hwmon');
+      if (capturedOutput.trim() == '1') {
+        runShellCommand('cat ' + path, {
+          captureOutput: true,
+          exitCallback: function (exitCode, capturedOutput) {
+            if (exitCode == 0) {
+              createControlOrSetValue(vdev, controlName, { type: 'temperature', title: controlName }, parseFloat((parseInt(capturedOutput) * 0.001).toFixed(3)));
+            }
+          },
+        });
+      } else {
+        if (vdev && vdev.isControlExists(controlName)) {
+          vdev.removeControl(controlName);
+        }
       }
     },
   });
@@ -114,12 +138,12 @@ function initReadRules() {
         var path = sysfsDirPath + '/' + node['hwmon-channel'] + '_input';
         var controlName = node['title'];
 
-        readChannel(path, controlName);
-        (function (path, controlName) {
+        readChannel(path, sysfsDirPath, controlName);
+        (function (path, sysfsDirPath, controlName) {
           setInterval(function () {
-            readChannel(path, controlName);
+            readChannel(path, sysfsDirPath, controlName);
           }, 10000);
-        })(path, controlName);
+        })(path, sysfsDirPath, controlName);
       }
     }
   }
