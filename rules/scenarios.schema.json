@@ -1,0 +1,289 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "title": "Automation scenarios",
+    "configFile": {
+        "path": "/etc/scenarios.conf",
+        "service": "wb-rules"
+    },
+    "definitions": {
+        "scenario": {
+            "title": "Scenario",
+            "headerTemplate": "{{ self.name }}",
+            "oneOf": [
+                { "$ref": "#/definitions/thermo" },
+                { "$ref": "#/definitions/linkInToOut" }
+            ],
+            "_format": "wb-multiple",
+            "options": {
+                "keep_oneof_values": false,
+                "disable_collapse": true,
+                "disable_edit_json": true,
+                "disable_properties": true,
+                "wb": {
+                    "disable_panel": true
+                }
+            }
+        },
+        "thermo": {
+            "type": "object",
+            "title": "Thermo",
+            "_format": "grid",
+            "properties": {
+                "scenarioType": {
+                    "type": "string",
+                    "enum": ["thermo"],
+                    "default": "thermo",
+                    "options": {
+                        "hidden": true
+                    }
+                },
+                "enable": {
+                    "type": "boolean",
+                    "title": "Enable",
+                    "default": true,
+                    "_format": "checkbox",
+                    "propertyOrder": 1,
+                    "options": {
+                        "grid_columns": 12
+                    }
+                },
+                "mode": {
+                    "type": "string",
+                    "title": "Operating mode",
+                    "enum": ["heating", "cooling"],
+                    "default": "heating",
+                    "propertyOrder": 2,
+                    "options": {
+                        "enum_titles": ["heating", "cooling"],
+                        "grid_columns": 12
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "title": "Scenario name",
+                    "default": "Thermostat",
+                    "minLength": 1,
+                    "propertyOrder": 3,
+                    "options": {
+                        "grid_columns": 6
+                    }
+                },
+                "setpoint": {
+                    "type": "number",
+                    "title": "Setpoint",
+                    "default": 20,
+                    "propertyOrder": 5,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "min_temp": {
+                    "type": "number",
+                    "title": "Minimum temperature (°С)",
+                    "default": 20,
+                    "propertyOrder": 6,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "max_temp": {
+                    "type": "number",
+                    "title": "Maximum temperature (°С)",
+                    "default": 30,
+                    "propertyOrder": 7,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "hysteresis": {
+                    "type": "number",
+                    "title": "Hysteresis",
+                    "default": 0.5,
+                    "propertyOrder": 8,
+                    "options": {
+                        "grid_columns": 3
+                    }
+                },
+                "zones": {
+                    "type": "array",
+                    "title": "Zones",
+                    "propertyOrder": 9,
+                    "items": {
+                        "type": "object",
+                        "title": "Zone",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "title": "Name",
+                                "propertyOrder": 1,
+                                "options": {
+                                    "inputAttributes": {
+                                        "placeholder": "Optional"
+                                    }
+                                }
+                            },
+                            "temp_sensor": {
+                                "type": "string",
+                                "title": "Temperature sensor",
+                                "propertyOrder": 2
+                            },
+                            "actuator": {
+                                "type": "string",
+                                "title": "Actuator",
+                                "propertyOrder": 3
+                            }
+                        },
+                        "required": ["temp_sensor", "actuator"]
+                    },
+                    "options": {
+                        "disable_collapse": true,
+                        "grid_columns": 12,
+                        "array_controls_top": true,
+                        "disable_array_delete_last_row": true,
+                        "wb": {
+                            "disable_panel": true
+                        }
+                    },
+                    "_format": "table"
+                }
+            },
+            "required": ["scenarioType", "enable", "mode", "name", "setpoint", "hysteresis", "min_temp", "max_temp", "zones"]
+        },
+        "linkInToOut": {
+            "type": "object",
+            "title": "Link in to out",
+            "description":"Данный сценарий предоставляет возможность прямого соединения дискретного входа с дискретным выходом<br><img src=\"images/scenarios-link-in-to-out.png\">",
+            "_format": "grid",
+            "properties": {
+                "scenarioType": {
+                    "type": "string",
+                    "enum": ["linkInToOut"],
+                    "default": "linkInToOut",
+                    "options": {
+                        "hidden": true
+                    }
+                },
+                "enable": {
+                    "type": "boolean",
+                    "title": "Enable",
+                    "default": true,
+                    "_format": "checkbox",
+                    "propertyOrder": 1,
+                    "options": {
+                        "grid_columns": 12
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "title": "Scenario name",
+                    "description": "Одно слово на английском языке исключая: пробел, /, +, #. Длина до 15 символов.",
+                    "_pattern_comment": "Запрещает пробелы, /, +, и #, а также ограничивает строку использованием только цифр, нижнего подчеркивания и английских букв",
+                    "pattern": "^[0-9a-zA-Z_]+$",
+                    "default": "link_from_to",
+                    "minLength": 1,
+                    "maxLength": 15,
+                    "propertyOrder": 2,
+                    "options": {
+                        "grid_columns": 12
+                    }
+                },
+                "inControl": {
+                    "type": "string",
+                    "_format": "wb-autocomplete",
+                    "title": "Input control",
+                    "description": "What input control we need use in format: device/control",
+                    "pattern": "^[^/+#]+/[^/+#]+$",
+                    "propertyOrder": 3,
+                    "options": {
+                        "grid_columns": 12,
+                        "wb": {
+                            "data": "devices"
+                        }
+                    },
+                    "minLength": 1
+                },
+                "inverseLink": {
+                    "type": "boolean",
+                    "title": "Inverse link behavior",
+                    "default": false,
+                    "_format": "checkbox",
+                    "propertyOrder": 4,
+                    "options": {
+                        "grid_columns": 12
+                    }
+                },
+                "outControl": {
+                    "type": "string",
+                    "_format": "wb-autocomplete",
+                    "title": "Output control",
+                    "description": "What output control we need use in format: device/control",
+                    "pattern": "^[^/+#]+/[^/+#]+$",
+                    "propertyOrder": 5,
+                    "options": {
+                        "grid_columns": 12,
+                        "wb": {
+                            "data": "devices"
+                        }
+                    },
+                    "minLength": 1
+                }
+            },
+            "required": ["scenarioType", "enable", "name"]
+        }
+    },
+
+    "properties": {
+        "scenarios": {
+            "type": "array",
+            "title": "Scenarios",
+            "items": { "$ref": "#/definitions/scenario" },
+            "options": {
+                "disable_collapse": true,
+                "disable_array_reorder": true,
+                "disable_array_delete_last_row": true,
+                "enable_array_copy": true
+            },
+            "_format": "tabs"
+        }
+    },
+
+    "required": ["scenarios"],
+
+    "options": {
+        "wb": {
+            "disable_title": true
+        }
+    },
+
+    "translations": {
+        "en": {
+        },
+        "ru": {
+            "Automation": "Сценарии автоматизации",
+            "Scenarios": "Сценарии",
+            "Scenario": "Сценарий",
+            "Thermo": "Термостат",
+            "Dark room": "Темная комната",
+            "Timer (s)": "Таймер (с)",
+            "Operating mode": "Режим работы",
+            "heating": "нагрев",
+            "cooling": "охлаждение",
+            "Scenario name": "Название сценария",
+            "Setpoint": "Уставка",
+            "Threshold motion level": "Пороговый уровень движения",
+            "Hysteresis": "Гистерезис",
+            "Minimum temperature (°С)": "Минимальная температура (°С)",
+            "Maximum temperature (°С)": "Максимальная температура (°С)",
+            "Zones": "Зоны",
+            "Name": "Имя",
+            "Temperature sensor": "Датчик температуры",
+            "Motion sensor": "Датчик движения",
+            "Door sensor": "Датчик открытия двери",
+            "Actuator": "Реле",
+            "Enable": "Включить",
+            "Zone": "Зона",
+            "Optional": "Не обязательно"
+        }
+    }
+}
