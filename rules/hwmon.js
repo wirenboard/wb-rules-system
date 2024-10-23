@@ -8,6 +8,22 @@ function _str_split_space(s) {
 }
 
 var nodeInfo = {};
+
+runShellCommand(
+  'test -d /sys/class/power_supply/wbec-battery',
+  {
+    captureOutput: false,
+    exitCallback: function (exitCode) {
+      if (exitCode != 0) return;
+      nodeInfo['wbec-battery'] = {
+        'title': 'Battery Temperature',
+        'hwmon-channel': 'temp1',
+        'hwmon-node-name': 'wbec-battery'
+      }
+    }
+  }
+)
+
 runShellCommand(
   'set /proc/device-tree/wirenboard/hwmon-nodes/*/*; [ -e "$1" ] || shift; for i; do echo -n $i; echo \' \'`cat $i`; done',
   {
