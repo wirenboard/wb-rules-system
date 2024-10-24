@@ -1,3 +1,9 @@
+wb-rules-system (1.12.2) stable; urgency=medium
+
+  * hwmon.js: add wb8.5 battery temp
+
+ -- Vladimir Romanov <v.romanov@wirenboard.com>  Wed, 23 Oct 2024 16:21:19 +0300
+
 wb-rules-system (1.12.1) stable; urgency=medium
 
   * buzzer: fix buzzer on zero frequency
