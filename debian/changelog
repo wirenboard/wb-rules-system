@@ -1,3 +1,9 @@
+wb-rules-system (1.12.3) stable; urgency=medium
+
+  * Update maintainer. No functional changes
+
+ -- Petr Krasnoshchekov <petr.krasnoshchekov@wirenboard.com>  Fri, 25 Oct 2024 16:22:56 +0500
+
 wb-rules-system (1.12.2) stable; urgency=medium
 
   * hwmon.js: add wb8.5 battery temp
