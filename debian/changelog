@@ -1,3 +1,9 @@
+wb-rules-system (1.12.2) stable; urgency=medium
+
+  * Fix power status updating at startup
+
+ -- Ekaterina Volkova <ekaterina.volkova@wirenboard.com>  Tue, 21 Jan 2025 15:28:57 +0300
+
 wb-rules-system (1.12.1) stable; urgency=medium
 
   * buzzer: fix buzzer on zero frequency

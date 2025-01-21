@@ -16,14 +16,18 @@ defineVirtualDevice('power_status', {
   },
 });
 
+function updateData(){
+  if (dev['power_status']['working on battery']) {
+    dev['power_status']['Vin'] = 0;
+  } else {
+    dev['power_status']['Vin'] = dev['wb-adc']['Vin'];
+  }
+}
+
 defineRule('_system_track_vin', {
   whenChanged: ['wb-adc/Vin', 'power_status/working on battery'],
   then: function () {
-    if (dev['power_status']['working on battery']) {
-      dev['power_status']['Vin'] = 0;
-    } else {
-      dev['power_status']['Vin'] = dev['wb-adc']['Vin'];
-    }
+    updateData()
   },
 });
 
@@ -61,3 +65,5 @@ spawn(
     },
   }
 );
+
+updateData();
