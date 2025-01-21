@@ -1,7 +1,7 @@
 Source: wb-rules-system
 Section: misc
 Priority: optional
-Maintainer: Evgeny Boger <boger@contactless.ru>
+Maintainer: Wiren Board team <info@wirenboard.com>
 Build-Depends: debhelper (>= 8.0.0)
 Standards-Version: 3.9.4
 Homepage: https://github.com/wirenboard/wb-rules-system/
