@@ -16,15 +16,24 @@ defineVirtualDevice('power_status', {
   },
 });
 
+function updateData(){
+  if (dev['power_status']['working on battery']) {
+    dev['power_status']['Vin'] = 0;
+  } else {
+    dev['power_status']['Vin'] = dev['wb-adc']['Vin'];
+  }
+}
+
 defineRule('_system_track_vin', {
   whenChanged: ['wb-adc/Vin', 'power_status/working on battery'],
-  then: function () {
-    if (dev['power_status']['working on battery']) {
-      dev['power_status']['Vin'] = 0;
-    } else {
-      dev['power_status']['Vin'] = dev['wb-adc']['Vin'];
-    }
+  then: updateData,
+});
+
+defineRule({
+  asSoonAs: function() {
+    return dev['wb-adc']['Vin'] !== null;
   },
+  then: updateData,
 });
 
 /* Power status reporting for Wiren Board 5.x is based on
