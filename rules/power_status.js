@@ -26,9 +26,14 @@ function updateData(){
 
 defineRule('_system_track_vin', {
   whenChanged: ['wb-adc/Vin', 'power_status/working on battery'],
-  then: function () {
-    updateData()
+  then: updateData,
+});
+
+defineRule({
+  asSoonAs: function() {
+    return dev['wb-adc']['Vin'] !== null;
   },
+  then: updateData,
 });
 
 /* Power status reporting for Wiren Board 5.x is based on
