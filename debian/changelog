@@ -1,3 +1,9 @@
+wb-rules-system (1.12.5) stable; urgency=medium
+
+  * Fix on fly changing of buzzer parameters on WB 8.4.x
+
+ -- Petr Krasnoshchekov <petr.krasnoshchekov@wirenboard.com>  Thu, 24 Apr 2025 10:07:29 +0500
+
 wb-rules-system (1.12.4) stable; urgency=medium
 
   * Fix power status updating at startup
