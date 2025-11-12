@@ -4,16 +4,6 @@ var systemCells = {
     type: 'text',
     value: '0',
   },
-  'Timezone': {
-    title: { en: 'Timezone', ru: 'Часовая зона' },
-    type: 'text',
-    value: '',
-  },
-  'Current time': {
-    title: { en: 'Current time', ru: 'Текущее время' },
-    type: 'text',
-    value: '',
-  },
   'Short SN': {
     title: { en: 'Short SN', ru: 'Серийный номер' },
     type: 'text',
@@ -50,26 +40,6 @@ function _system_update_uptime() {
       },
     }
   );
-}
-
-function _system_update_datetime() {
-  runShellCommand('date +"%Z (UTC%z)"', {
-    captureOutput: true,
-    exitCallback: function (exitCode, capturedOutput) {
-      if (exitCode == 0) {
-        dev.system['Timezone'] = capturedOutput.trim();
-      }
-    }
-  });
-
-  runShellCommand('date +"%Y-%m-%d %H:%M"', {
-    captureOutput: true,
-    exitCallback: function (exitCode, capturedOutput) {
-      if (exitCode == 0) {
-        dev.system['Current time'] = capturedOutput.trim();
-      }
-    }
-  });
 }
 
 spawn('sh', ['-c', '[ -d /proc/device-tree/wirenboard ]'], {
@@ -139,9 +109,6 @@ function initSystemDevice(hasWirenboardNode) {
 
   _system_update_uptime();
   setInterval(_system_update_uptime, 60000);
-
-  _system_update_datetime();
-  setInterval(_system_update_datetime, 60000);
 
   spawn('cat', ['/var/lib/wirenboard/short_sn.conf'], {
     captureOutput: true,
