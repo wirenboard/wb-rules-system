@@ -5,19 +5,19 @@
  */
 
 var systemTimeCells = {
-  'Timezone': {
+  'timezone': {
     title: { en: 'Timezone', ru: 'Часовая зона' },
     type: 'text',
     order: 3,
     value: '',
   },
-  'Current date': {
+  'current_date': {
     title: { en: 'Current date', ru: 'Текущая дата' },
     type: 'text',
     order: 1,
     value: '',
   },
-  'Current time': {
+  'current_time': {
     title: { en: 'Current time', ru: 'Текущее время' },
     type: 'text',
     order: 2,
@@ -50,15 +50,15 @@ function _system_time_update_datetime() {
 
     var timezoneStr = _formatTimezone(now.getTimezoneOffset());
     
-    dev['system-time']['Timezone'] = timezoneStr;
-    dev['system-time']['Current date'] = dateStr;
-    dev['system-time']['Current time'] = timeStr;
+    dev['system_time']['timezone'] = timezoneStr;
+    dev['system_time']['current_date'] = dateStr;
+    dev['system_time']['current_time'] = timeStr;
   } catch (error) {
     log.error('system_time: Failed to update datetime: {}', error.message);
   }
 }
 
-defineVirtualDevice('system-time', {
+defineVirtualDevice('system_time', {
   title: { en: 'System Time', ru: 'Системное время' },
   cells: systemTimeCells,
 });
