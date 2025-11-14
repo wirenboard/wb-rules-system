@@ -1,4 +1,4 @@
-wb-rules-system (1.12.6) stable; urgency=medium
+wb-rules-system (1.13.0) stable; urgency=medium
 
   * Add system time virtual device in webui
 
