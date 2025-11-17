@@ -41,20 +41,34 @@ function _system_time_update_datetime() {
   try {
     var now = new Date();
     
-    var dateStr = now.getFullYear() + '-' + 
-                _padZero(now.getMonth() + 1) + '-' + 
-                _padZero(now.getDate());
+    // Calculate time until next minute + 100ms
+    var secondsUntilNextMinute = 60 - now.getSeconds();
+    var millisecondsUntilNextMinute = secondsUntilNextMinute * 1000 - now.getMilliseconds() + 100;
     
-    var timeStr = _padZero(now.getHours()) + ':' + 
-                _padZero(now.getMinutes());
+    // Schedule timer to update at the start of new minute
+    setTimeout(function() {
+      try {
+        // Get new time (already next minute)
+        var newNow = new Date();
+        
+        var dateStr = newNow.getFullYear() + '-' + 
+                    _padZero(newNow.getMonth() + 1) + '-' + 
+                    _padZero(newNow.getDate());
+        
+        var timeStr = _padZero(newNow.getHours()) + ':' + 
+                    _padZero(newNow.getMinutes());
 
-    var timezoneStr = _formatTimezone(now.getTimezoneOffset());
-    
-    dev['system_time']['timezone'] = timezoneStr;
-    dev['system_time']['current_date'] = dateStr;
-    dev['system_time']['current_time'] = timeStr;
+        var timezoneStr = _formatTimezone(newNow.getTimezoneOffset());
+        
+        dev['system_time']['timezone'] = timezoneStr;
+        dev['system_time']['current_date'] = dateStr;
+        dev['system_time']['current_time'] = timeStr;
+      } catch (error) {
+        log.error('system_time: Failed to update datetime in timeout: {}', error.message);
+      }
+    }, millisecondsUntilNextMinute);
   } catch (error) {
-    log.error('system_time: Failed to update datetime: {}', error.message);
+    log.error('system_time: Failed to schedule datetime update: {}', error.message);
   }
 }
 
