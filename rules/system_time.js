@@ -5,22 +5,28 @@
  */
 
 var systemTimeCells = {
-  'timezone': {
-    title: { en: 'Timezone', ru: 'Часовая зона' },
-    type: 'text',
-    order: 3,
-    value: '',
-  },
   'current_date': {
-    title: { en: 'Current date', ru: 'Текущая дата' },
+    title: { en: 'Date', ru: 'Дата' },
     type: 'text',
     order: 1,
     value: '',
   },
-  'current_time': {
-    title: { en: 'Current time', ru: 'Текущее время' },
+  'current_day': {
+    title: { en: 'Day of week', ru: 'День недели' },
     type: 'text',
     order: 2,
+    value: '',
+  },
+  'current_time': {
+    title: { en: 'Time', ru: 'Время' },
+    type: 'text',
+    order: 3,
+    value: '',
+  },
+  'timezone': {
+    title: { en: 'Timezone', ru: 'Часовая зона' },
+    type: 'text',
+    order: 4,
     value: '',
   },
 };
@@ -56,7 +62,7 @@ function _system_time_update_datetime() {
         
         var dateStr = newNow.getFullYear() + '-' + 
                     _padZero(newNow.getMonth() + 1) + '-' + 
-                    _padZero(newNow.getDate()) + ' ' + dayName;
+                    _padZero(newNow.getDate());
         
         var timeStr = _padZero(newNow.getHours()) + ':' + 
                     _padZero(newNow.getMinutes());
@@ -65,6 +71,7 @@ function _system_time_update_datetime() {
         
         dev['system_time']['timezone'] = timezoneStr;
         dev['system_time']['current_date'] = dateStr;
+        dev['system_time']['current_day'] = dayName;
         dev['system_time']['current_time'] = timeStr;
       } catch (error) {
         log.error('system_time: Failed to update datetime in timeout: {}', error.message);
