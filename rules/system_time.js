@@ -15,12 +15,12 @@ var systemTimeCells = {
     title: { en: 'Day of week', ru: 'День недели' },
     type: 'value',
     order: 2,
-    value: 0,
+    value: 7,
     forceDefault: true,
     enum: {
       0: {
-        en: 'Not initialized',
-        ru: 'Не инициализировано',
+        en: 'Sunday',
+        ru: 'Воскресенье',
       },
       1: {
         en: 'Monday',
@@ -47,8 +47,8 @@ var systemTimeCells = {
         ru: 'Суббота',
       },
       7: {
-        en: 'Sunday',
-        ru: 'Воскресенье',
+        en: 'Not initialized',
+        ru: 'Не инициализировано',
       }
     }
   },
