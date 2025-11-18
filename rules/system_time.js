@@ -59,7 +59,7 @@ var systemTimeCells = {
     value: '',
   },
   'timezone': {
-    title: { en: 'Timezone', ru: 'Часовая зона' },
+    title: { en: 'Timezone', ru: 'Часовой пояс' },
     type: 'text',
     order: 4,
     value: '',
