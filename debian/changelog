@@ -2,7 +2,7 @@ wb-rules-system (1.13.0) stable; urgency=medium
 
   * Add system time virtual device in webui
 
- -- Ivan Praulov <ivan.praulov@wirenboard.com>  Fri, 14 Nov 2025 10:50:00 +0500
+ -- Ivan Praulov <ivan.praulov@wirenboard.com>  Fri, 18 Nov 2025 16:55:00 +0500
 
 wb-rules-system (1.12.5) stable; urgency=medium
 
