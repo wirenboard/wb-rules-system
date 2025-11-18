@@ -13,9 +13,44 @@ var systemTimeCells = {
   },
   'current_day': {
     title: { en: 'Day of week', ru: 'День недели' },
-    type: 'text',
+    type: 'value',
     order: 2,
-    value: '',
+    value: 0,
+    forceDefault: true,
+    enum: {
+      0: {
+        en: 'Not initialized',
+        ru: 'Не инициализировано',
+      },
+      1: {
+        en: 'Monday',
+        ru: 'Понедельник',
+      },
+      2: {
+        en: 'Tuesday',
+        ru: 'Вторник',
+      },
+      3: {
+        en: 'Wednesday',
+        ru: 'Среда',
+      },
+      4: {
+        en: 'Thursday',
+        ru: 'Четверг',
+      },
+      5: {
+        en: 'Friday',
+        ru: 'Пятница',
+      },
+      6: {
+        en: 'Saturday',
+        ru: 'Суббота',
+      },
+      7: {
+        en: 'Sunday',
+        ru: 'Воскресенье',
+      }
+    }
   },
   'current_time': {
     title: { en: 'Time', ru: 'Время' },
@@ -57,8 +92,7 @@ function _system_time_update_datetime() {
         // Get new time (already next minute)
         var newNow = new Date();
         
-        var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        var dayName = dayNames[newNow.getDay()];
+        var dayNum = newNow.getDay();
         
         var dateStr = newNow.getFullYear() + '-' + 
                     _padZero(newNow.getMonth() + 1) + '-' + 
@@ -71,7 +105,7 @@ function _system_time_update_datetime() {
         
         dev['system_time']['timezone'] = timezoneStr;
         dev['system_time']['current_date'] = dateStr;
-        dev['system_time']['current_day'] = dayName;
+        dev['system_time']['current_day'] = dayNum;
         dev['system_time']['current_time'] = timeStr;
       } catch (error) {
         log.error('system_time: Failed to update datetime in timeout: {}', error.message);
