@@ -51,9 +51,12 @@ function _system_time_update_datetime() {
         // Get new time (already next minute)
         var newNow = new Date();
         
+        var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var dayName = dayNames[newNow.getDay()];
+        
         var dateStr = newNow.getFullYear() + '-' + 
                     _padZero(newNow.getMonth() + 1) + '-' + 
-                    _padZero(newNow.getDate());
+                    _padZero(newNow.getDate()) + ' ' + dayName;
         
         var timeStr = _padZero(newNow.getHours()) + ':' + 
                     _padZero(newNow.getMinutes());
