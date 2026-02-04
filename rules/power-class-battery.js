@@ -86,7 +86,10 @@ function createControlOrSetValue(vdevObj, controlName, controlDesc, initialValue
     vdevObj.addControl(controlName, desc);
   }
 
-  vdevObj.getControl(controlName).setValue({ value: initialValue });
+  var ctrl = vdevObj.getControl(controlName);
+  if (ctrl.getValue() != initialValue) {
+    ctrl.setValue({ value: initialValue });
+  }
 }
 
 function updateControl(
