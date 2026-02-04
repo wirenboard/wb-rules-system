@@ -86,7 +86,10 @@ function createControlOrSetValue(vdevObj, controlName, controlDesc, initialValue
     vdevObj.addControl(controlName, desc);
   }
 
-  vdevObj.getControl(controlName).setValue({ value: initialValue });
+  var ctrl = vdevObj.getControl(controlName);
+  if (ctrl.getValue() != initialValue) {
+    ctrl.setValue({ value: initialValue });
+  }
 }
 
 function updateControl(
@@ -169,8 +172,10 @@ function publishData() {
   if (mainsName) {
     var mainsData = powerSuppliesData[mainsName];
     if (mainsData.hasOwnProperty('ONLINE')) {
-      var mainsOnline = mainsData['ONLINE'] == '1';
-      dev['power_status/working on battery'] = !mainsOnline;
+      var newStatus = mainsData['ONLINE'] != '1';
+      if (dev['power_status/working on battery'] != newStatus) {
+        dev['power_status/working on battery'] = newStatus;
+      }
     }
   }
 }
