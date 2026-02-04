@@ -1,3 +1,9 @@
+wb-rules-system (1.13.1) stable; urgency=medium
+
+  * power-class-battery: don't publish unchanged "working on battery" status
+
+ -- Nikolay Korotkiy <nikolay.korotkiy@wirenboard.com>  Wed, 04 Feb 2026 15:20:00 +0400
+
 wb-rules-system (1.13.0) stable; urgency=medium
 
   * Add system time virtual device in webui

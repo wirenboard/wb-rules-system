@@ -169,8 +169,10 @@ function publishData() {
   if (mainsName) {
     var mainsData = powerSuppliesData[mainsName];
     if (mainsData.hasOwnProperty('ONLINE')) {
-      var mainsOnline = mainsData['ONLINE'] == '1';
-      dev['power_status/working on battery'] = !mainsOnline;
+      var newStatus = mainsData['ONLINE'] != '1';
+      if (dev['power_status/working on battery'] != newStatus) {
+        dev['power_status/working on battery'] = newStatus;
+      }
     }
   }
 }
