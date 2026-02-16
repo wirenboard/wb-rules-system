@@ -66,6 +66,14 @@ var systemTimeCells = {
   },
 };
 
+//Saving old values
+var lastValues = {
+  current_date: null,
+  current_day: null,
+  current_time: null,
+  timezone: null,
+};
+
 function _padZero(num) {
   var str = String(num);
   return str.length < 2 ? '0' + str : str;
@@ -103,10 +111,26 @@ function _system_time_update_datetime() {
 
         var timezoneStr = _formatTimezone(newNow.getTimezoneOffset());
         
-        dev['system_time']['timezone'] = timezoneStr;
-        dev['system_time']['current_date'] = dateStr;
-        dev['system_time']['current_day'] = dayNum;
-        dev['system_time']['current_time'] = timeStr;
+        if (lastValues.timezone !== timezoneStr) {
+          dev['system_time']['timezone'] = timezoneStr;
+          lastValues.timezone = timezoneStr;
+        }
+
+        if (lastValues.current_date !== dateStr) {
+          dev['system_time']['current_date'] = dateStr;
+          lastValues.current_date = dateStr;
+        }
+
+        if (lastValues.current_day !== dayNum) {
+          dev['system_time']['current_day'] = dayNum;
+          lastValues.current_day = dayNum;
+        }
+
+        if (lastValues.current_time !== timeStr) {
+          dev['system_time']['current_time'] = timeStr;
+          lastValues.current_time = timeStr;
+        }
+
       } catch (error) {
         log.error('system_time: Failed to update datetime in timeout: {}', error.message);
       }
