@@ -1,3 +1,9 @@
+wb-rules-system (1.13.2) stable; urgency=medium
+
+  * system_time.js: don't publish unchanged var
+
+ -- Ilya Tikhonyuk <ilya.tikhonyuk@wirenboard.com>  Wed, 18 Feb 2026 09:48:00 +0300
+
 wb-rules-system (1.13.1) stable; urgency=medium
 
   * power-class-battery: don't publish unchanged "working on battery" status
