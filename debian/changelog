@@ -1,8 +1,14 @@
-wb-rules-system (1.13.2) stable; urgency=medium
+wb-rules-system (1.13.3) stable; urgency=medium
 
   * system_time.js: don't publish unchanged var
 
- -- Ilya Tikhonyuk <ilya.tikhonyuk@wirenboard.com>  Wed, 18 Feb 2026 09:48:00 +0300
+ -- Ilya Tikhonyuk <ilya.tikhonyuk@wirenboard.com>  Thu, 19 Feb 2026 12:30:00 +0300
+
+wb-rules-system (1.13.2) stable; urgency=medium
+
+  * system: reorder and remove DTS Version
+
+ -- Victor Vedenin <victor.vedenin@wirenboard.com>  Wed, 18 Feb 2026 16:43:00 +0300
 
 wb-rules-system (1.13.1) stable; urgency=medium
 
