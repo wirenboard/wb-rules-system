@@ -3,30 +3,30 @@ var systemCells = {
     title: { en: 'Current uptime', ru: 'Время работы' },
     type: 'text',
     value: '0',
+    order: 8,
   },
   'Short SN': {
     title: { en: 'Short SN', ru: 'Серийный номер' },
     type: 'text',
     value: '',
-  },
-  'DTS Version': {
-    title: { en: 'DTS Version', ru: 'Версия DTS' },
-    type: 'text',
-    value: '',
+    order: 1,
   },
   'Release suite': {
     title: { en: 'Release suite', ru: 'Тип релиза' },
     type: 'text',
     value: '',
+    order: 7,
   },
   'Release name': {
     title: { en: 'Release name', ru: 'Название релиза' },
     type: 'text',
     value: '',
+    order: 6,
   },
   Reboot: {
     title: { en: 'Reboot', ru: 'Перезагрузить' },
     type: 'pushbutton',
+    order: 9,
   },
 };
 
@@ -77,21 +77,25 @@ function initSystemDevice(hasWirenboardNode) {
       title: { en: 'HW Revision', ru: 'Версия контроллера' },
       type: 'text',
       value: '',
+      order: 5,
     };
     systemCells['Batch No'] = {
       title: { en: 'Batch No', ru: 'Номер партии' },
       type: 'text',
       value: '',
+      order: 2,
     };
     systemCells['Manufacturing Date'] = {
       title: { en: 'Manufacturing Date', ru: 'Дата производства' },
       type: 'text',
       value: '',
+      order: 3,
     };
     systemCells['Temperature Grade'] = {
       title: { en: 'Temperature Grade', ru: 'Температурный диапазон' },
       type: 'text',
       value: '',
+      order: 4,
     };
   }
 
@@ -114,13 +118,6 @@ function initSystemDevice(hasWirenboardNode) {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       dev.system['Short SN'] = capturedOutput.trim();
-    },
-  });
-
-  spawn('bash', ['-c', '. /etc/wb_env.sh && echo $WB_VERSION'], {
-    captureOutput: true,
-    exitCallback: function (exitCode, capturedOutput) {
-      dev.system['DTS Version'] = capturedOutput;
     },
   });
 

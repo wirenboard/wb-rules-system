@@ -1,3 +1,9 @@
+wb-rules-system (1.13.2) stable; urgency=medium
+
+  * system: reorder and remove DTS Version
+
+ -- Victor Vedenin <victor.vedenin@wirenboard.com>  Wed, 18 Feb 2026 16:43:00 +0300
+
 wb-rules-system (1.13.1) stable; urgency=medium
 
   * power-class-battery: don't publish unchanged "working on battery" status
