@@ -18,6 +18,11 @@ function createControlOrSetValue(vdevObj, controlName, controlDesc, initialValue
 }
 
 var nodeInfo = {};
+var translations = {
+  'Battery Temperature': 'Температура батареи',
+  'Board Temperature': 'Температура платы',
+  'CPU Temperature': 'Температура процессора'
+};
 
 runShellCommand(
   'test -d /sys/class/power_supply/wbec-battery',
@@ -62,7 +67,11 @@ runShellCommand(
       for (var nodeName in nodeInfo) {
         if (nodeInfo.hasOwnProperty(nodeName)) {
           var node = nodeInfo[nodeName];
-          cells[node['title']] = { type: 'temperature', value: 0.0 };
+          var title = node['title']
+          cells[title] = { type: 'temperature', value: 0.0 };
+          if (translations[title]) {
+            cells[title]['title'] = { en: title, ru: translations[title] }
+          }
         }
       }
 
