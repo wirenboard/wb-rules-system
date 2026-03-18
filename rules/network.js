@@ -131,7 +131,7 @@ function _system_update_ip(name, iface) {
     {
       captureOutput: true,
       exitCallback: function (exitCode, capturedOutput) {
-        dev.network[name] = capturedOutput;
+        dev.network[name] = capturedOutput.trim();
       },
     }
   );
