@@ -6,6 +6,7 @@ Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.5.1
 Homepage: https://github.com/wirenboard/wb-rules-system/
 Vcs-Git: https://github.com/wirenboard/wb-rules-system/
+Rules-Requires-Root: no
 
 Package: wb-rules-system
 Architecture: all
