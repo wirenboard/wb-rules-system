@@ -1,6 +1,6 @@
 wb-rules-system (1.13.6) stable; urgency=medium
 
-  * Fix postinst, no functional changes
+  * postinst: use try-restart and ignore restart failures
 
  -- Nikolay Korotkiy <nikolay.korotkiy@wirenboard.com>  Thu, 02 Jul 2026 18:20:00 +0400
 
