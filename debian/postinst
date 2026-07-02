@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-deb-systemd-invoke restart wb-rules
+deb-systemd-invoke try-restart wb-rules || true
 
 #DEBHELPER#
 
