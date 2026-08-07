@@ -2,7 +2,7 @@ wb-rules-system (1.13.7) stable; urgency=medium
 
   * hwmon: Add GPU Temperature translation
 
- -- Andrey Ksenofontov <andrey.ksenofontov@wirenboard.com>  Thu, 06 Aug 2026 19:43:00 +0300wb-rules-system (1.13.6) stable; urgency=medium
+ -- Andrey Ksenofontov <andrey.ksenofontov@wirenboard.com>  Thu, 06 Aug 2026 19:43:00 +0300
 
   * postinst: use try-restart and ignore restart failures
 
