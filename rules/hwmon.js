@@ -21,7 +21,8 @@ var nodeInfo = {};
 var translations = {
   'Battery Temperature': 'Температура батареи',
   'Board Temperature': 'Температура платы',
-  'CPU Temperature': 'Температура процессора'
+  'CPU Temperature': 'Температура процессора',
+  'GPU Temperature': 'Температура графического процессора'
 };
 
 runShellCommand(
