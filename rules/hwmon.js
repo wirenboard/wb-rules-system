@@ -65,9 +65,9 @@ runShellCommand(
       }
 
       var cells = {};
-      for (var nodeName in nodeInfo) {
-        if (nodeInfo.hasOwnProperty(nodeName)) {
-          var node = nodeInfo[nodeName];
+      for (var nodeKey in nodeInfo) {
+        if (nodeInfo.hasOwnProperty(nodeKey)) {
+          var node = nodeInfo[nodeKey];
           var title = node['title']
           cells[title] = { type: 'temperature', value: 0.0 };
           if (translations[title]) {

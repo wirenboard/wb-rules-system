@@ -4,6 +4,7 @@
  * @author Ivan Praulov <ivan.praulov@wirenboard.com>
  */
 
+/** @type {ControlsSpec} */
 var systemTimeCells = {
   'current_date': {
     title: { en: 'Date', ru: 'Дата' },
