@@ -63,6 +63,9 @@
   // Integer truncation toward zero, like parseInt(number) did by way of
   // stringifying its argument (which also turned Infinity into NaN - kept:
   // frequency is a range that can be 0, and 1/0 must still give period 0).
+  // Identical to the old expression for every value String(x) prints
+  // positionally (1e-6 <= |x| < 1e21, i.e. all physically meaningful inputs);
+  // beyond that parseInt read only the mantissa digits of the exponent form.
   // ES5 only on purpose: Math.trunc does not exist on Duktape (wb-rules < 2.47).
   function _buzzer_trunc(x) {
     if (!isFinite(x)) return NaN;
