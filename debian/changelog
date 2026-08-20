@@ -1,3 +1,15 @@
+wb-rules-system (1.13.8) stable; urgency=medium
+
+  * Fix findings of the wb-rules type checker (checkJs) in the shipped rules:
+    - power-class-battery: declare psName (was an implicit global)
+    - buzzer: compute PWM period/duty with an explicit integer truncation
+      instead of parseInt(number) (ES5, works on every wb-rules version)
+    - hwmon: do not redeclare nodeName with a different type in one function
+    - system, system_time, wbmz-battery: annotate cell specs as ControlsSpec so
+      they type-check against the wb-rules control types
+
+ -- Evgeny Boger <boger@wirenboard.com>  Tue, 18 Aug 2026 18:49:57 +0000
+
 wb-rules-system (1.13.7) stable; urgency=medium
 
   * hwmon: Add GPU Temperature translation

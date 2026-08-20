@@ -36,6 +36,7 @@ function updatePowerStatus(newCurrent) {
 function initDevice(resetButon) {
   /*Инициализация модуля*/
   runShellCommand('i2cset -y {} 0x70 0x00 0x10'.format(config.bus));
+  /** @type {ControlsSpec} */
   var cells = {
     Percentage: {
       type: 'value',

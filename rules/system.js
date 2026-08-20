@@ -1,3 +1,4 @@
+/** @type {ControlsSpec} */
 var systemCells = {
   'Current uptime': {
     title: { en: 'Current uptime', ru: 'Время работы' },

@@ -63,7 +63,7 @@ function collectData() {
 
       // remove power supplies which are no longer present
       Object.keys(powerSupplyNamesByType).forEach(function (psType) {
-        psName = powerSupplyNamesByType[psType];
+        var psName = powerSupplyNamesByType[psType];
         if (newPowerSupplyList.indexOf(psName) == -1) {
           delete powerSupplyNamesByType[psType];
         }

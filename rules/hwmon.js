@@ -64,10 +64,11 @@ runShellCommand(
         }
       }
 
+      /** @type {ControlsSpec} */
       var cells = {};
-      for (var nodeName in nodeInfo) {
-        if (nodeInfo.hasOwnProperty(nodeName)) {
-          var node = nodeInfo[nodeName];
+      for (var nodeKey in nodeInfo) {
+        if (nodeInfo.hasOwnProperty(nodeKey)) {
+          var node = nodeInfo[nodeKey];
           var title = node['title']
           cells[title] = { type: 'temperature', value: 0.0 };
           if (translations[title]) {
@@ -139,9 +140,9 @@ function readChannel(path, sysfsPath, controlName) {
 }
 
 function initReadRules() {
-  for (var nodeName in nodeInfo) {
-    if (nodeInfo.hasOwnProperty(nodeName)) {
-      var node = nodeInfo[nodeName];
+  for (var nodeKey in nodeInfo) {
+    if (nodeInfo.hasOwnProperty(nodeKey)) {
+      var node = nodeInfo[nodeKey];
 
       var sysfsDirPath = sysfsMapping[node['hwmon-node-name']];
       if (sysfsDirPath) {
