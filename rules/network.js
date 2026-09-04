@@ -141,23 +141,34 @@ function _system_update_ip(name, iface) {
       dev.network[name + ' Online Status'] = exitCode === 0;
     },
   });
-  runShellCommand("ip link show {} 2>/dev/null | awk '{for (i=1; i<=NF; i++) if ($i == \"state\") print $(i+1)}'".format(iface), {
-    captureOutput: true,
-    exitCallback: function (exitCode, capturedOutput) {
-      dev.network[name + ' Connection Enabled'] = capturedOutput.trim() === "UP";
-    },
-  });
+  // ppp and other point-to-point interfaces stay at "state UNKNOWN" while running,
+  // so look at the LOWER_UP flag instead: it is set exactly when the link is up
+  runShellCommand(
+    "ip link show {} 2>/dev/null | head -n1 | grep -qE '<[^>]*(,|<)LOWER_UP(,|>)'".format(iface),
+    {
+      captureOutput: false,
+      exitCallback: function (exitCode) {
+        dev.network[name + ' Connection Enabled'] = exitCode === 0;
+      },
+    }
+  );
 }
 
 function _current_active_connection() {
   runShellCommand("ip route get {} 2>/dev/null | grep -oP 'dev\\s+\\K[^ ]+'".format(checkAddress), {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
-      dev.network['Default Interface'] = exitCode === 0 ? capturedOutput.trim() : '';
+      var default_interface = exitCode === 0 ? capturedOutput.trim() : '';
+      dev.network['Default Interface'] = default_interface;
+      // the connection list is read here, not in parallel,
+      // so that it always sees the interface resolved above
+      _update_active_connections(default_interface);
     },
   });
+}
 
-  runShellCommand('nmcli -t -f DEVICE,NAME c s -a 2>/dev/null', {
+function _update_active_connections(default_interface) {
+  runShellCommand('nmcli -t -f NAME,UUID c s -a 2>/dev/null', {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       if (exitCode != 0) {
@@ -166,18 +177,52 @@ function _current_active_connection() {
         return;
       }
       var lines = capturedOutput.split('\n');
-      var active_connections = [];
-      for (var i = 0; i < lines.length - 1; i++) {
-        var dev_name = lines[i].split(':')[0].trim();
-        var con_name = lines[i].split(':')[1].trim();
-        active_connections.push(con_name);
-        if (dev_name === dev.network['Default Interface']) {
-          dev.network['Internet Connection'] = con_name;
+      var connections = [];
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (line === '') {
+          continue;
         }
+        // nmcli escapes colons inside a name, the uuid never has any: split at the last one
+        var separator = line.lastIndexOf(':');
+        connections.push({ name: line.slice(0, separator).trim(), uuid: line.slice(separator + 1).trim() });
       }
-      dev.network['Active Connections'] = JSON.stringify(active_connections.sort());
+      var names = [];
+      for (var j = 0; j < connections.length; j++) {
+        names.push(connections[j].name);
+      }
+      dev.network['Active Connections'] = JSON.stringify(names.sort());
+      _update_internet_connection(connections, default_interface);
     },
   });
+}
+
+function _update_internet_connection(connections, default_interface) {
+  if (default_interface === '' || connections.length === 0) {
+    dev.network['Internet Connection'] = '';
+    return;
+  }
+  // NetworkManager reports the modem port (ttyUSB1) as the device of a GSM connection
+  // while the routes live on ppp0, so match by the interface carrying the IP configuration
+  var pending = connections.length;
+  var found = '';
+  for (var i = 0; i < connections.length; i++) {
+    (function (connection) {
+      runShellCommand("nmcli -t -f GENERAL.IP-IFACE c s {} 2>/dev/null".format(connection.uuid), {
+        captureOutput: true,
+        exitCallback: function (exitCode, capturedOutput) {
+          var ip_iface = capturedOutput.split(':')[1];
+          if (exitCode === 0 && ip_iface !== undefined && ip_iface.trim() === default_interface) {
+            found = connection.name;
+          }
+          pending -= 1;
+          if (pending === 0) {
+            dev.network['Internet Connection'] = found;
+          }
+        },
+      });
+    })(connections[i]);
+  }
 }
 
 function _system_update_ip_all() {
