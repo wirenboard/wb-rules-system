@@ -1,3 +1,12 @@
+wb-rules-system (1.13.9) stable; urgency=medium
+
+  * network: report GPRS/ppp connections as enabled (state is UNKNOWN for them,
+    so check the LOWER_UP flag instead)
+  * network: match the internet connection by its IP interface, so that a GSM
+    connection is recognised, and clear the control when nothing matches
+
+ -- Ilya Titov <ilya.titov@wirenboard.com>  Fri, 04 Sep 2026 12:32:07 +0300
+
 wb-rules-system (1.13.8) stable; urgency=medium
 
   * Fix findings of the wb-rules type checker (checkJs) in the shipped rules:
