@@ -1,10 +1,7 @@
-DESTDIR=/
-dummy:
-	echo
-
+PREFIX = /usr
 
 install:
-	cp -a rules/* $(DESTDIR)/usr/share/wb-rules-system/rules
-	cp -f wbmz2-battery.conf $(DESTDIR)/etc/wbmz2-battery.conf
+	install -Dm0644 rules/* -t $(DESTDIR)$(PREFIX)/share/wb-rules-system/rules
+	install -Dm0644 wbmz2-battery.conf -t $(DESTDIR)/etc
 
-.PHONY: dummy install
+.PHONY: install

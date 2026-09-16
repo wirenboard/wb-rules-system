@@ -1,3 +1,9 @@
+wb-rules-system (1.13.10) stable; urgency=medium
+
+  * system: strip trailing NUL bytes from command output
+
+ -- Nikolay Korotkiy <sikmir@disroot.org>  Wed, 16 Sep 2026 02:43:57 +0400
+
 wb-rules-system (1.13.9) stable; urgency=medium
 
   * network: report GPRS/ppp connections as enabled (state is UNKNOWN for them,

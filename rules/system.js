@@ -57,7 +57,7 @@ function fillWirenboardNodeProperty(controlName, propertyName) {
     captureOutput: true,
     exitCallback: function (exitCode, capturedOutput) {
       if (exitCode == 0) {
-        dev.system[controlName] = capturedOutput.trim();
+        dev.system[controlName] = capturedOutput.replace(/\0+$/, '').trim();
       }
     },
   });
