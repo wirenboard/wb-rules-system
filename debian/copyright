@@ -5,12 +5,10 @@ Source: https://github.com/wirenboard/wb-rules-system
 
 Files: *
 Copyright: 2013 Automation Technologies, LLC (Wiren Board)
-           2013 Evgeny Boger
 License: MIT-WB
 
 License: MIT-WB
  Copyright (c) 2013 Automation Technologies, LLC (Wiren Board)
- Copyright (c) 2013 Evgeny Boger
  .
  Permission is hereby granted, free of charge, to any person obtaining a copy of
  this software and associated documentation files (the "Software"), to deal in
@@ -34,7 +32,6 @@ License: MIT-WB
  .
  .
  Copyright (c) 2013 ООО «Оборудование для автоматизации» (Wiren Board)
- Copyright (c) 2013 Evgeny Boger
  .
  Данная лицензия разрешает лицам, получившим копию данного программного
  обеспечения и сопутствующей документации (в дальнейшем именуемыми
