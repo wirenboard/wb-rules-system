@@ -1,3 +1,11 @@
+wb-rules-system (1.13.11) stable; urgency=medium
+
+  * Switch the license to The WB License (MIT-WB): Automation Technologies, LLC (Wiren Board)
+    as the copyright holder, 2013 as the first publication year, use restricted to Wiren Board equipment
+  * Fill debian/copyright in the DEP-5 format
+
+ -- Ekaterina Volkova <ekaterina.volkova@wirenboard.com>  Thu, 12 Nov 2026 15:46:43 +0300
+
 wb-rules-system (1.13.10) stable; urgency=medium
 
   * system: strip trailing NUL bytes from command output
